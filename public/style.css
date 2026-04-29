@@ -233,6 +233,57 @@ h2 { font-size: 1.2rem; margin-bottom: 0.25rem; }
   text-transform: uppercase;
 }
 
+/* Section dividers inside forms */
+.form-section-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin: 1.25rem 0 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Routing rules builder */
+.rules-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem; }
+.rules-empty { font-size: 0.82rem; color: var(--muted); padding: 0.4rem 0; }
+
+.rule-row {
+  display: grid;
+  grid-template-columns: 100px 1fr 20px 1fr 32px;
+  gap: 0.4rem;
+  align-items: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+}
+.rule-arrow { text-align: center; color: var(--muted); font-size: 0.9rem; }
+.rule-dest-input { font-size: 0.85rem; }
+.rule-delete { padding: 0.2rem 0.4rem; font-size: 0.9rem; color: var(--muted); }
+.rule-delete:hover { color: var(--danger); }
+.rule-type-select, .rule-match-select { font-size: 0.83rem; }
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+.badge-active  { background: rgba(90,247,160,0.12); color: var(--success); }
+.badge-expired { background: rgba(247,90,90,0.12); color: var(--danger); }
+.badge-info    { background: rgba(124,106,247,0.12); color: var(--accent); }
+.badge-routing { background: rgba(255,200,50,0.12); color: #f5c842; }
+
+.code-label-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.1rem; }
+
 /* Logo upload row */
 .logo-input-row {
   display: flex;
@@ -431,4 +482,7 @@ input:focus, select:focus { border-color: var(--accent); }
   .code-item { flex-direction: column; align-items: flex-start; }
   .stats-summary { grid-template-columns: 1fr 1fr; }
   .user-email { display: none; }
+  .rule-row { grid-template-columns: 1fr 1fr 32px; grid-template-rows: auto auto; }
+  .rule-arrow { display: none; }
+  .rule-dest-input { grid-column: 1 / 3; }
 }

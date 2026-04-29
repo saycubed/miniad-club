@@ -223,6 +223,26 @@
             <div id="dyn-logo-preview" class="logo-preview hidden"></div>
           </div>
 
+          <div class="form-section-label">Limits &amp; Expiry <span class="label-hint">(optional)</span></div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Max Scans</label>
+              <input type="number" id="dyn-scan-limit" placeholder="Unlimited" min="1" />
+            </div>
+            <div class="form-group">
+              <label>Expires On</label>
+              <input type="datetime-local" id="dyn-expires-at" />
+            </div>
+          </div>
+
+          <div class="form-section-label">
+            Smart Routing <span class="label-hint">(first match wins — overrides default destination)</span>
+            <button type="button" class="btn ghost small" id="dyn-add-rule">+ Add Rule</button>
+          </div>
+          <div id="dyn-rules" class="rules-list">
+            <p class="rules-empty">No rules — all scans redirect to the destination above.</p>
+          </div>
+
           <button class="btn primary" id="dyn-create">Create Dynamic QR</button>
 
           <div id="dyn-result" class="result hidden">
@@ -263,7 +283,7 @@
 
         <!-- Edit Modal -->
         <div id="edit-modal" class="modal hidden">
-          <div class="modal-box">
+          <div class="modal-box modal-wide">
             <h3>Update QR Code</h3>
             <input type="hidden" id="edit-slug" />
             <div class="form-group">
@@ -325,8 +345,28 @@
               </div>
               <div id="edit-logo-preview" class="logo-preview hidden"></div>
             </div>
+            <div class="form-section-label">Limits &amp; Expiry <span class="label-hint">(optional)</span></div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Max Scans</label>
+                <input type="number" id="edit-scan-limit" placeholder="Unlimited" min="1" />
+              </div>
+              <div class="form-group">
+                <label>Expires On</label>
+                <input type="datetime-local" id="edit-expires-at" />
+              </div>
+            </div>
+
+            <div class="form-section-label">
+              Smart Routing <span class="label-hint">(first match wins)</span>
+              <button type="button" class="btn ghost small" id="edit-add-rule">+ Add Rule</button>
+            </div>
+            <div id="edit-rules" class="rules-list">
+              <p class="rules-empty">No rules.</p>
+            </div>
+
             <div class="modal-actions">
-              <button class="btn primary" id="edit-save">Save</button>
+              <button class="btn primary" id="edit-save">Save Changes</button>
               <button class="btn ghost" id="edit-cancel">Cancel</button>
             </div>
           </div>
