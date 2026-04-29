@@ -88,6 +88,7 @@ async function loadCodes() {
       </div>
       <div class="code-actions">
         <button class="btn secondary small" onclick="viewCode('${c.slug}')">QR</button>
+        <button class="btn secondary small" onclick="openStats('${c.slug}')">Stats</button>
         <button class="btn secondary small" onclick="openEdit('${c.slug}', '${encodeURIComponent(c.destination)}', '${encodeURIComponent(c.label || '')}')">Edit</button>
         <button class="btn danger small" onclick="deleteCode('${c.slug}')">Delete</button>
       </div>
@@ -146,3 +147,81 @@ async function deleteCode(slug) {
 }
 
 document.getElementById('refresh-list').addEventListener('click', loadCodes);
+
+// --- Stats modal ---
+document.getElementById('stats-close').addEventListener('click', () => {
+  document.getElementById('stats-modal').classList.add('hidden');
+});
+
+function deviceType(ua) {
+  if (!ua) return 'Unknown';
+  if (/mobile|android|iphone/i.test(ua)) return 'Mobile';
+  if (/ipad|tablet/i.test(ua)) return 'Tablet';
+  return 'Desktop';
+}
+
+function deviceIcon(ua) {
+  const d = deviceType(ua);
+  if (d === 'Mobile') return '📱';
+  if (d === 'Tablet') return '⊡';
+  return '🖥';
+}
+
+async function openStats(slug) {
+  const res = await fetch(`${API}/api/dynamic/${slug}/scans`);
+  const data = await res.json();
+  if (!res.ok) { alert(data.error || 'Failed to load stats'); return; }
+
+  document.getElementById('stats-title').textContent =
+    `Analytics — ${data.label || slug} (${data.total} total scan${data.total !== 1 ? 's' : ''})`;
+
+  const maxCount = data.daily.length ? Math.max(...data.daily.map(d => d.count)) : 1;
+
+  // Build last-30-days date list so gaps show as 0
+  const days = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 86400000);
+    days.push(d.toISOString().slice(0, 10));
+  }
+  const dailyMap = Object.fromEntries(data.daily.map(d => [d.day, d.count]));
+
+  const bars = days.map(day => {
+    const count = dailyMap[day] || 0;
+    const pct = maxCount ? Math.round((count / maxCount) * 100) : 0;
+    const label = day.slice(5); // MM-DD
+    return `<div class="bar-col">
+      <div class="bar-wrap"><div class="bar" style="height:${pct}%" title="${count} scan${count !== 1 ? 's' : ''} on ${day}"></div></div>
+      <div class="bar-label">${label}</div>
+    </div>`;
+  }).join('');
+
+  const recentRows = data.recent.length
+    ? data.recent.map(s => {
+        const dt = new Date(s.scanned_at * 1000).toLocaleString();
+        return `<tr>
+          <td>${dt}</td>
+          <td>${deviceIcon(s.user_agent)} ${deviceType(s.user_agent)}</td>
+          <td class="ip-cell">${s.ip || '—'}</td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="3" class="empty">No scans yet</td></tr>';
+
+  document.getElementById('stats-content').innerHTML = `
+    <div class="stats-summary">
+      <div class="stat-box"><div class="stat-num">${data.total}</div><div class="stat-label">Total Scans</div></div>
+      <div class="stat-box"><div class="stat-num">${data.daily.reduce((a, d) => a + d.count, 0)}</div><div class="stat-label">Last 30 Days</div></div>
+      <div class="stat-box"><div class="stat-num">${data.recent[0] ? new Date(data.recent[0].scanned_at * 1000).toLocaleDateString() : '—'}</div><div class="stat-label">Last Scan</div></div>
+    </div>
+    <h4 class="chart-title">Daily scans (last 30 days)</h4>
+    <div class="bar-chart">${bars}</div>
+    <h4 class="chart-title" style="margin-top:1.5rem">Recent scans</h4>
+    <div class="scan-table-wrap">
+      <table class="scan-table">
+        <thead><tr><th>Time</th><th>Device</th><th>IP</th></tr></thead>
+        <tbody>${recentRows}</tbody>
+      </table>
+    </div>
+  `;
+
+  document.getElementById('stats-modal').classList.remove('hidden');
+}

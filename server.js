@@ -20,18 +20,37 @@ db.exec(`
     created_at INTEGER DEFAULT (unixepoch()),
     updated_at INTEGER DEFAULT (unixepoch()),
     scan_count INTEGER DEFAULT 0
-  )
+  );
+  CREATE TABLE IF NOT EXISTS scans (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code_slug TEXT NOT NULL,
+    scanned_at INTEGER DEFAULT (unixepoch()),
+    ip TEXT,
+    user_agent TEXT,
+    FOREIGN KEY (code_slug) REFERENCES dynamic_codes(slug) ON DELETE CASCADE
+  );
+  CREATE INDEX IF NOT EXISTS idx_scans_slug ON scans(code_slug);
+  CREATE INDEX IF NOT EXISTS idx_scans_at ON scans(scanned_at);
 `);
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
+const recordScan = db.transaction((slug, ip, ua) => {
+  db.prepare('UPDATE dynamic_codes SET scan_count = scan_count + 1 WHERE slug = ?').run(slug);
+  db.prepare('INSERT INTO scans (code_slug, ip, user_agent) VALUES (?, ?, ?)').run(slug, ip, ua);
+});
+
+function clientIp(req) {
+  return (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress || null;
+}
+
 // --- Redirect endpoint for dynamic QR codes ---
 app.get('/r/:slug', (req, res) => {
   const row = db.prepare('SELECT * FROM dynamic_codes WHERE slug = ?').get(req.params.slug);
   if (!row) return res.status(404).send('QR code not found');
-  db.prepare('UPDATE dynamic_codes SET scan_count = scan_count + 1 WHERE slug = ?').run(req.params.slug);
+  recordScan(req.params.slug, clientIp(req), req.headers['user-agent'] || null);
   res.redirect(302, row.destination);
 });
 
@@ -102,6 +121,29 @@ app.patch('/api/dynamic/:slug', (req, res) => {
   ).run(destination || null, label || null, req.params.slug);
 
   res.json({ success: true });
+});
+
+// --- Dynamic QR: scan stats ---
+app.get('/api/dynamic/:slug/scans', (req, res) => {
+  const row = db.prepare('SELECT slug, label, scan_count FROM dynamic_codes WHERE slug = ?').get(req.params.slug);
+  if (!row) return res.status(404).json({ error: 'Not found' });
+
+  // Daily counts for last 30 days
+  const daily = db.prepare(`
+    SELECT date(scanned_at, 'unixepoch') AS day, COUNT(*) AS count
+    FROM scans
+    WHERE code_slug = ? AND scanned_at >= unixepoch() - 86400 * 30
+    GROUP BY day ORDER BY day ASC
+  `).all(req.params.slug);
+
+  // 20 most recent scans
+  const recent = db.prepare(`
+    SELECT scanned_at, ip, user_agent
+    FROM scans WHERE code_slug = ?
+    ORDER BY scanned_at DESC LIMIT 20
+  `).all(req.params.slug);
+
+  res.json({ slug: row.slug, label: row.label, total: row.scan_count, daily, recent });
 });
 
 // --- Dynamic QR: delete ---
