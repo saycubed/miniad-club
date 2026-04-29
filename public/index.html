@@ -98,22 +98,25 @@
             </div>
           </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label>Eye Style</label>
-              <select id="static-eye-style">
-                <option value="frame0">Square</option>
-                <option value="frame1">Circle</option>
-                <option value="frame2">Rounded</option>
-                <option value="frame6">Dot</option>
-                <option value="frame13">Leaf</option>
-                <option value="frame16">Star</option>
-              </select>
+          <div class="form-group">
+            <label>Eye Style</label>
+            <select id="static-eye-style">
+              <option value="frame0">Square</option>
+              <option value="frame1">Circle</option>
+              <option value="frame2">Rounded</option>
+              <option value="frame6">Dot</option>
+              <option value="frame13">Leaf</option>
+              <option value="frame16">Star</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Logo <span class="label-hint">(optional)</span></label>
+            <div class="logo-input-row">
+              <input type="text" id="static-logo" placeholder="Paste URL or upload an image…" />
+              <button type="button" class="btn secondary small upload-logo-btn" data-url-target="static-logo" data-preview="static-logo-preview">Upload</button>
             </div>
-            <div class="form-group">
-              <label>Logo URL <span class="label-hint">(optional)</span></label>
-              <input type="text" id="static-logo" placeholder="https://example.com/logo.png" />
-            </div>
+            <div id="static-logo-preview" class="logo-preview hidden"></div>
           </div>
 
           <div class="form-row">
@@ -212,8 +215,12 @@
           </div>
 
           <div class="form-group">
-            <label>Logo URL <span class="label-hint">(optional)</span></label>
-            <input type="text" id="dyn-logo" placeholder="https://example.com/logo.png" />
+            <label>Logo <span class="label-hint">(optional)</span></label>
+            <div class="logo-input-row">
+              <input type="text" id="dyn-logo" placeholder="Paste URL or upload an image…" />
+              <button type="button" class="btn secondary small upload-logo-btn" data-url-target="dyn-logo" data-preview="dyn-logo-preview">Upload</button>
+            </div>
+            <div id="dyn-logo-preview" class="logo-preview hidden"></div>
           </div>
 
           <button class="btn primary" id="dyn-create">Create Dynamic QR</button>
@@ -311,8 +318,12 @@
               </div>
             </div>
             <div class="form-group">
-              <label>Logo URL <span class="label-hint">(optional)</span></label>
-              <input type="text" id="edit-logo" placeholder="https://example.com/logo.png" />
+              <label>Logo <span class="label-hint">(optional)</span></label>
+              <div class="logo-input-row">
+                <input type="text" id="edit-logo" placeholder="Paste URL or upload an image…" />
+                <button type="button" class="btn secondary small upload-logo-btn" data-url-target="edit-logo" data-preview="edit-logo-preview">Upload</button>
+              </div>
+              <div id="edit-logo-preview" class="logo-preview hidden"></div>
             </div>
             <div class="modal-actions">
               <button class="btn primary" id="edit-save">Save</button>

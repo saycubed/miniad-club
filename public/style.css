@@ -233,6 +233,45 @@ h2 { font-size: 1.2rem; margin-bottom: 0.25rem; }
   text-transform: uppercase;
 }
 
+/* Logo upload row */
+.logo-input-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.logo-input-row input { flex: 1; }
+
+.logo-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.logo-preview img {
+  height: 48px;
+  width: auto;
+  max-width: 120px;
+  border-radius: 4px;
+  object-fit: contain;
+  background: #fff;
+  padding: 3px;
+}
+.logo-clear-btn {
+  background: transparent;
+  border: none;
+  color: var(--danger);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  margin-left: auto;
+}
+.logo-clear-btn:hover { background: rgba(247,90,90,0.12); }
+
 /* QR preview */
 .qr-preview-wrap {
   background: #fff;

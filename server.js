@@ -6,6 +6,8 @@ const { nanoid } = require('nanoid');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
 
 const app = express();
 const db = new Database('qrcodes.db');
@@ -152,8 +154,26 @@ function clientIp(req) {
   return (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress || null;
 }
 
+// --- Logo upload (multer) ---
+const logoStorage = multer.diskStorage({
+  destination: 'public/uploads/',
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    cb(null, `${nanoid(12)}${ext}`);
+  },
+});
+const logoUpload = multer({
+  storage: logoStorage,
+  limits: { fileSize: 3 * 1024 * 1024 }, // 3 MB
+  fileFilter: (req, file, cb) => {
+    const allowed = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp'];
+    if (allowed.includes(path.extname(file.originalname).toLowerCase())) cb(null, true);
+    else cb(new Error('Only image files are allowed (png, jpg, gif, svg, webp)'));
+  },
+});
+
 app.use(cors());
-app.use(express.json({ limit: '5mb' })); // allow base64 logo in body
+app.use(express.json({ limit: '5mb' }));
 app.use(express.static('public'));
 
 // =============================================================================
@@ -192,6 +212,22 @@ app.get('/api/auth/me', auth, (req, res) => {
   const user = db.prepare('SELECT id, email, name, created_at FROM users WHERE id = ?').get(req.user.userId);
   if (!user) return res.status(404).json({ error: 'User not found' });
   res.json(user);
+});
+
+// =============================================================================
+// Logo upload
+// =============================================================================
+
+app.post('/api/logo/upload', auth, logoUpload.single('logo'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  res.json({ url: `/uploads/${req.file.filename}` });
+});
+
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError || err.message.includes('Only image')) {
+    return res.status(400).json({ error: err.message });
+  }
+  next(err);
 });
 
 // =============================================================================

@@ -28,10 +28,88 @@ bindColorPair('edit-color', 'edit-color-hex');
 bindColorPair('edit-bg-color', 'edit-bg-color-hex');
 
 // =============================================================================
+// Logo upload buttons
+// =============================================================================
+
+function initLogoUploadButtons() {
+  document.querySelectorAll('.upload-logo-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/png,image/jpeg,image/gif,image/svg+xml,image/webp';
+      fileInput.onchange = () => handleLogoFile(fileInput.files[0], btn);
+      fileInput.click();
+    });
+  });
+
+  // Auto-preview when user pastes a URL into a logo field
+  document.querySelectorAll('[id$="-logo"]').forEach(input => {
+    if (input.type !== 'text') return;
+    const previewId = input.id + '-preview';
+    input.addEventListener('change', () => showLogoPreview(input.value.trim(), previewId));
+    input.addEventListener('paste', () => {
+      setTimeout(() => showLogoPreview(input.value.trim(), previewId), 50);
+    });
+  });
+}
+
+async function handleLogoFile(file, btn) {
+  if (!file) return;
+
+  const urlTargetId = btn.dataset.urlTarget;
+  const previewId = btn.dataset.preview;
+  const originalText = btn.textContent;
+
+  btn.textContent = 'Uploading…';
+  btn.disabled = true;
+
+  const formData = new FormData();
+  formData.append('logo', file);
+
+  try {
+    const res = await fetch(`${API}/api/logo/upload`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${getToken()}` },
+      body: formData,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Upload failed');
+
+    document.getElementById(urlTargetId).value = data.url;
+    showLogoPreview(data.url, previewId);
+  } catch (err) {
+    alert('Upload failed: ' + err.message);
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+}
+
+function showLogoPreview(url, previewId) {
+  const preview = document.getElementById(previewId);
+  if (!preview) return;
+  if (!url) { preview.classList.add('hidden'); preview.innerHTML = ''; return; }
+  preview.innerHTML = `
+    <img src="${url}" alt="Logo preview" onerror="this.parentElement.classList.add('hidden')" />
+    <button type="button" class="logo-clear-btn" onclick="clearLogo('${previewId}')">Remove</button>`;
+  preview.classList.remove('hidden');
+}
+
+function clearLogo(previewId) {
+  const preview = document.getElementById(previewId);
+  // find the associated URL input (same prefix)
+  const urlInput = document.getElementById(previewId.replace('-preview', ''));
+  if (urlInput) urlInput.value = '';
+  preview.innerHTML = '';
+  preview.classList.add('hidden');
+}
+
+// =============================================================================
 // Init
 // =============================================================================
 
 async function init() {
+  initLogoUploadButtons();
   const token = getToken();
   if (!token) return showAuth();
   try {
@@ -289,6 +367,7 @@ async function openEdit(slug) {
   document.getElementById('edit-dest').value = data.destination;
   document.getElementById('edit-label').value = data.label || '';
   document.getElementById('edit-logo').value = data.qr_logo || '';
+  showLogoPreview(data.qr_logo || '', 'edit-logo-preview');
   setColorPair('edit-color', 'edit-color-hex', data.qr_color || '#000000');
   setColorPair('edit-bg-color', 'edit-bg-color-hex', data.qr_bg_color || '#FFFFFF');
   setSelect('edit-body-style', data.qr_body_style || 'square');
