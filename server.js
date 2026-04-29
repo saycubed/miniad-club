@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const QRCode = require('qrcode');
 const Database = require('better-sqlite3');
@@ -11,6 +12,7 @@ const db = new Database('qrcodes.db');
 const PORT = process.env.PORT || 3000;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
+const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY || '';
 
 // --- DB schema ---
 db.exec(`
@@ -27,6 +29,11 @@ db.exec(`
     destination TEXT NOT NULL,
     label TEXT,
     user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
+    qr_color TEXT DEFAULT '#000000',
+    qr_bg_color TEXT DEFAULT '#FFFFFF',
+    qr_body_style TEXT DEFAULT 'square',
+    qr_eye_style TEXT DEFAULT 'frame0',
+    qr_logo TEXT DEFAULT NULL,
     created_at INTEGER DEFAULT (unixepoch()),
     updated_at INTEGER DEFAULT (unixepoch()),
     scan_count INTEGER DEFAULT 0
@@ -43,13 +50,88 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_scans_at ON scans(scanned_at);
 `);
 
-// Migration: add user_id if dynamic_codes predates auth
-const cols = db.prepare('PRAGMA table_info(dynamic_codes)').all();
-if (!cols.find(c => c.name === 'user_id')) {
-  db.prepare('ALTER TABLE dynamic_codes ADD COLUMN user_id TEXT REFERENCES users(id) ON DELETE CASCADE').run();
+// Migrations for existing DBs
+(function migrate() {
+  const cols = db.prepare('PRAGMA table_info(dynamic_codes)').all().map(c => c.name);
+  const toAdd = {
+    user_id: 'TEXT REFERENCES users(id) ON DELETE CASCADE',
+    qr_color: "TEXT DEFAULT '#000000'",
+    qr_bg_color: "TEXT DEFAULT '#FFFFFF'",
+    qr_body_style: "TEXT DEFAULT 'square'",
+    qr_eye_style: "TEXT DEFAULT 'frame0'",
+    qr_logo: 'TEXT DEFAULT NULL',
+  };
+  for (const [col, def] of Object.entries(toAdd)) {
+    if (!cols.includes(col)) {
+      db.prepare(`ALTER TABLE dynamic_codes ADD COLUMN ${col} ${def}`).run();
+    }
+  }
+})();
+
+// =============================================================================
+// QR generation — uses QR Code Monkey API when RAPIDAPI_KEY is set,
+// falls back to local qrcode package
+// =============================================================================
+
+const QR_API = 'https://qrcode-monkey.p.rapidapi.com/qr/custom';
+
+async function generateQRBuffer(data, opts = {}) {
+  const {
+    color = '#000000',
+    bgColor = '#FFFFFF',
+    bodyStyle = 'square',
+    eyeStyle = 'frame0',
+    logo = '',
+    size = 400,
+  } = opts;
+
+  if (!RAPIDAPI_KEY) {
+    // local fallback (no color/logo support)
+    return QRCode.toBuffer(data, { type: 'png', width: size, margin: 2 });
+  }
+
+  const config = {
+    body: bodyStyle,
+    eye: eyeStyle,
+    eyeBall: 'ball0',
+    bodyColor: color,
+    bgColor: bgColor,
+    eye1Color: color,
+    eye2Color: color,
+    eye3Color: color,
+    gradientColor1: '',
+    gradientColor2: '',
+    gradientType: 'linear',
+    gradientOnEyes: 'true',
+    logo: logo || '',
+    logoMode: logo ? 'default' : undefined,
+  };
+
+  const res = await fetch(QR_API, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-RapidAPI-Key': RAPIDAPI_KEY,
+      'X-RapidAPI-Host': 'qrcode-monkey.p.rapidapi.com',
+    },
+    body: JSON.stringify({ data, config, size, download: false, file: 'png' }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`QR API ${res.status}: ${text}`);
+  }
+
+  const buf = await res.arrayBuffer();
+  return Buffer.from(buf);
 }
 
-// --- Middleware helpers ---
+async function generateQRDataUrl(data, opts = {}) {
+  const buf = await generateQRBuffer(data, opts);
+  return `data:image/png;base64,${buf.toString('base64')}`;
+}
+
+// --- Auth & scan helpers ---
 function auth(req, res, next) {
   const header = req.headers['authorization'];
   if (!header || !header.startsWith('Bearer ')) return res.status(401).json({ error: 'Unauthorized' });
@@ -71,7 +153,7 @@ function clientIp(req) {
 }
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '5mb' })); // allow base64 logo in body
 app.use(express.static('public'));
 
 // =============================================================================
@@ -82,7 +164,6 @@ app.post('/api/auth/signup', async (req, res) => {
   const { email, password, name } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
   if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
-
   const hash = await bcrypt.hash(password, 10);
   const id = nanoid();
   try {
@@ -114,7 +195,7 @@ app.get('/api/auth/me', auth, (req, res) => {
 });
 
 // =============================================================================
-// Public: redirect (no auth — QR scans must work without login)
+// Public redirect
 // =============================================================================
 
 app.get('/r/:slug', (req, res) => {
@@ -125,40 +206,46 @@ app.get('/r/:slug', (req, res) => {
 });
 
 // =============================================================================
-// Static QR (no auth — anyone can use the generator)
+// Static QR
 // =============================================================================
 
 app.post('/api/static', async (req, res) => {
-  const { url, format = 'png', size = 300 } = req.body;
+  const {
+    url, size = 400,
+    color = '#000000', bgColor = '#FFFFFF',
+    bodyStyle = 'square', eyeStyle = 'frame0',
+    logo = '',
+  } = req.body;
   if (!url) return res.status(400).json({ error: 'url is required' });
   try {
-    const opts = { width: size, margin: 2 };
-    if (format === 'svg') {
-      const svg = await QRCode.toString(url, { type: 'svg', ...opts });
-      res.set('Content-Type', 'image/svg+xml');
-      return res.send(svg);
-    }
-    const buffer = await QRCode.toBuffer(url, { type: 'png', ...opts });
+    const buf = await generateQRBuffer(url, { color, bgColor, bodyStyle, eyeStyle, logo, size });
     res.set('Content-Type', 'image/png');
-    res.send(buffer);
+    res.send(buf);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
 // =============================================================================
-// Dynamic QR (auth required — scoped to req.user.userId)
+// Dynamic QR (auth required)
 // =============================================================================
 
 app.post('/api/dynamic', auth, async (req, res) => {
-  const { destination, label, slug: customSlug } = req.body;
+  const {
+    destination, label, slug: customSlug,
+    color = '#000000', bgColor = '#FFFFFF',
+    bodyStyle = 'square', eyeStyle = 'frame0',
+    logo = '',
+  } = req.body;
   if (!destination) return res.status(400).json({ error: 'destination is required' });
   const slug = customSlug || nanoid(8);
   const redirectUrl = `${BASE_URL}/r/${slug}`;
   try {
-    db.prepare('INSERT INTO dynamic_codes (id, slug, destination, label, user_id) VALUES (?, ?, ?, ?, ?)')
-      .run(nanoid(), slug, destination, label || null, req.user.userId);
-    const qrDataUrl = await QRCode.toDataURL(redirectUrl, { width: 300, margin: 2 });
+    db.prepare(`INSERT INTO dynamic_codes
+      (id, slug, destination, label, user_id, qr_color, qr_bg_color, qr_body_style, qr_eye_style, qr_logo)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+      .run(nanoid(), slug, destination, label || null, req.user.userId, color, bgColor, bodyStyle, eyeStyle, logo || null);
+    const qrDataUrl = await generateQRDataUrl(redirectUrl, { color, bgColor, bodyStyle, eyeStyle, logo });
     res.json({ slug, redirectUrl, destination, label, qrDataUrl });
   } catch (err) {
     if (err.message.includes('UNIQUE')) return res.status(409).json({ error: 'Slug already taken' });
@@ -175,16 +262,32 @@ app.get('/api/dynamic/:slug', auth, async (req, res) => {
   const row = db.prepare('SELECT * FROM dynamic_codes WHERE slug = ? AND user_id = ?').get(req.params.slug, req.user.userId);
   if (!row) return res.status(404).json({ error: 'Not found' });
   const redirectUrl = `${BASE_URL}/r/${row.slug}`;
-  const qrDataUrl = await QRCode.toDataURL(redirectUrl, { width: 300, margin: 2 });
+  const qrDataUrl = await generateQRDataUrl(redirectUrl, {
+    color: row.qr_color, bgColor: row.qr_bg_color,
+    bodyStyle: row.qr_body_style, eyeStyle: row.qr_eye_style,
+    logo: row.qr_logo || '',
+  });
   res.json({ ...row, redirectUrl, qrDataUrl });
 });
 
-app.patch('/api/dynamic/:slug', auth, (req, res) => {
-  const { destination, label } = req.body;
+app.patch('/api/dynamic/:slug', auth, async (req, res) => {
+  const {
+    destination, label,
+    color, bgColor, bodyStyle, eyeStyle, logo,
+  } = req.body;
   const row = db.prepare('SELECT id FROM dynamic_codes WHERE slug = ? AND user_id = ?').get(req.params.slug, req.user.userId);
   if (!row) return res.status(404).json({ error: 'Not found' });
-  db.prepare('UPDATE dynamic_codes SET destination = COALESCE(?, destination), label = COALESCE(?, label), updated_at = unixepoch() WHERE slug = ? AND user_id = ?')
-    .run(destination || null, label || null, req.params.slug, req.user.userId);
+  db.prepare(`UPDATE dynamic_codes SET
+    destination  = COALESCE(?, destination),
+    label        = COALESCE(?, label),
+    qr_color     = COALESCE(?, qr_color),
+    qr_bg_color  = COALESCE(?, qr_bg_color),
+    qr_body_style = COALESCE(?, qr_body_style),
+    qr_eye_style  = COALESCE(?, qr_eye_style),
+    qr_logo      = COALESCE(?, qr_logo),
+    updated_at   = unixepoch()
+    WHERE slug = ? AND user_id = ?`)
+    .run(destination||null, label||null, color||null, bgColor||null, bodyStyle||null, eyeStyle||null, logo||null, req.params.slug, req.user.userId);
   res.json({ success: true });
 });
 
@@ -197,22 +300,18 @@ app.delete('/api/dynamic/:slug', auth, (req, res) => {
 app.get('/api/dynamic/:slug/scans', auth, (req, res) => {
   const row = db.prepare('SELECT slug, label, scan_count FROM dynamic_codes WHERE slug = ? AND user_id = ?').get(req.params.slug, req.user.userId);
   if (!row) return res.status(404).json({ error: 'Not found' });
-
   const daily = db.prepare(`
     SELECT date(scanned_at, 'unixepoch') AS day, COUNT(*) AS count
     FROM scans WHERE code_slug = ? AND scanned_at >= unixepoch() - 86400 * 30
     GROUP BY day ORDER BY day ASC
   `).all(req.params.slug);
-
   const recent = db.prepare(`
     SELECT scanned_at, ip, user_agent FROM scans WHERE code_slug = ?
     ORDER BY scanned_at DESC LIMIT 20
   `).all(req.params.slug);
-
   res.json({ slug: row.slug, label: row.label, total: row.scan_count, daily, recent });
 });
 
-// --- Dashboard summary ---
 app.get('/api/dashboard', auth, (req, res) => {
   const { count: totalCodes } = db.prepare('SELECT COUNT(*) as count FROM dynamic_codes WHERE user_id = ?').get(req.user.userId);
   const { count: totalScans } = db.prepare(`
@@ -228,4 +327,4 @@ app.get('/api/dashboard', auth, (req, res) => {
   res.json({ totalCodes, totalScans, daily });
 });
 
-app.listen(PORT, () => console.log(`QR server running at ${BASE_URL}`));
+app.listen(PORT, () => console.log(`QR server running at ${BASE_URL}${RAPIDAPI_KEY ? ' [RapidAPI QR enabled]' : ' [local QR fallback]'}`));

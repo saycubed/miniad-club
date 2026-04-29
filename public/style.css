@@ -213,6 +213,35 @@ h2 { font-size: 1.2rem; margin-bottom: 0.25rem; }
 .form-group label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
+/* Color picker: swatch + hex text side by side */
+.color-field {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.color-field input[type="color"] {
+  width: 42px;
+  height: 38px;
+  padding: 2px 3px;
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.color-field input[type="text"] {
+  flex: 1;
+  font-family: monospace;
+  text-transform: uppercase;
+}
+
+/* QR preview */
+.qr-preview-wrap {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  display: inline-flex;
+}
+.qr-preview-wrap img { max-width: 280px; display: block; border-radius: 4px; }
+
 input, select {
   background: var(--bg);
   border: 1px solid var(--border);
@@ -285,7 +314,9 @@ input:focus, select:focus { border-color: var(--accent); }
 .code-label { font-weight: 600; font-size: 0.95rem; }
 .code-slug { color: var(--accent); font-size: 0.82rem; font-family: monospace; }
 .code-dest { color: var(--muted); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 380px; }
-.code-scans { font-size: 0.78rem; color: var(--success); margin-top: 0.1rem; }
+.code-meta { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.2rem; }
+.code-scans { font-size: 0.78rem; color: var(--success); }
+.code-swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
 .code-actions { display: flex; gap: 0.35rem; flex-shrink: 0; }
 .empty { text-align: center; color: var(--muted); padding: 2rem; font-size: 0.9rem; }
 

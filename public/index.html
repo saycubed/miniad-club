@@ -18,7 +18,6 @@
           <button class="auth-tab active" data-auth="login">Sign In</button>
           <button class="auth-tab" data-auth="signup">Create Account</button>
         </div>
-
         <form id="login-form">
           <div class="form-group">
             <label>Email</label>
@@ -30,7 +29,6 @@
           </div>
           <button type="submit" class="btn primary full">Sign In</button>
         </form>
-
         <form id="signup-form" class="hidden">
           <div class="form-group">
             <label>Name (optional)</label>
@@ -46,7 +44,6 @@
           </div>
           <button type="submit" class="btn primary full">Create Account</button>
         </form>
-
         <div id="auth-error" class="auth-error hidden"></div>
       </div>
     </div>
@@ -68,58 +65,163 @@
     </header>
 
     <main>
-      <!-- Static QR Tab -->
+
+      <!-- ── Static QR ── -->
       <section id="tab-static" class="tab active">
         <div class="card">
           <h2>Generate Static QR Code</h2>
-          <p class="subtitle">Permanently encodes a URL into the QR image. To change the destination later, use a Dynamic QR instead.</p>
+          <p class="subtitle">Permanently encodes a URL. To change the destination later, use a Dynamic QR instead.</p>
+
           <div class="form-group">
             <label>URL or Text</label>
             <input type="text" id="static-url" placeholder="https://example.com" />
           </div>
+
           <div class="form-row">
             <div class="form-group">
-              <label>Format</label>
-              <select id="static-format">
-                <option value="png">PNG</option>
-                <option value="svg">SVG</option>
+              <label>Size (px)</label>
+              <input type="number" id="static-size" value="400" min="100" max="1000" />
+            </div>
+            <div class="form-group">
+              <label>Body Style</label>
+              <select id="static-body-style">
+                <option value="square">Square</option>
+                <option value="dot">Dot</option>
+                <option value="round">Round</option>
+                <option value="rounded-in">Rounded In</option>
+                <option value="diamond">Diamond</option>
+                <option value="star">Star</option>
+                <option value="mosaic">Mosaic</option>
+                <option value="circular">Circular</option>
+                <option value="leaf">Leaf</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Eye Style</label>
+              <select id="static-eye-style">
+                <option value="frame0">Square</option>
+                <option value="frame1">Circle</option>
+                <option value="frame2">Rounded</option>
+                <option value="frame6">Dot</option>
+                <option value="frame13">Leaf</option>
+                <option value="frame16">Star</option>
               </select>
             </div>
             <div class="form-group">
-              <label>Size (px)</label>
-              <input type="number" id="static-size" value="300" min="100" max="1000" />
+              <label>Logo URL <span class="label-hint">(optional)</span></label>
+              <input type="text" id="static-logo" placeholder="https://example.com/logo.png" />
             </div>
           </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>QR Color</label>
+              <div class="color-field">
+                <input type="color" id="static-color" value="#000000" />
+                <input type="text" id="static-color-hex" value="#000000" maxlength="7" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Background Color</label>
+              <div class="color-field">
+                <input type="color" id="static-bg-color" value="#FFFFFF" />
+                <input type="text" id="static-bg-color-hex" value="#FFFFFF" maxlength="7" />
+              </div>
+            </div>
+          </div>
+
           <button class="btn primary" id="static-generate">Generate QR</button>
+
           <div id="static-result" class="result hidden">
-            <img id="static-qr-img" alt="QR Code" />
-            <a id="static-download" class="btn secondary" download="qrcode">Download</a>
+            <div class="qr-preview-wrap">
+              <img id="static-qr-img" alt="QR Code" />
+            </div>
+            <a id="static-download" class="btn secondary" download="qrcode.png">Download PNG</a>
           </div>
         </div>
       </section>
 
-      <!-- Dynamic QR Tab -->
+      <!-- ── Dynamic QR ── -->
       <section id="tab-dynamic" class="tab hidden">
         <div class="card">
           <h2>Create Dynamic QR Code</h2>
-          <p class="subtitle">Points to a short link on this server. You can update the destination anytime — no need to reprint.</p>
+          <p class="subtitle">Points to a short link you can update anytime — no need to reprint.</p>
+
           <div class="form-group">
             <label>Destination URL</label>
             <input type="text" id="dyn-url" placeholder="https://your-target.com" />
           </div>
+
           <div class="form-row">
             <div class="form-group">
-              <label>Label (optional)</label>
+              <label>Label <span class="label-hint">(optional)</span></label>
               <input type="text" id="dyn-label" placeholder="Campaign name..." />
             </div>
             <div class="form-group">
-              <label>Custom Slug (optional)</label>
+              <label>Custom Slug <span class="label-hint">(optional)</span></label>
               <input type="text" id="dyn-slug" placeholder="my-link" />
             </div>
           </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Body Style</label>
+              <select id="dyn-body-style">
+                <option value="square">Square</option>
+                <option value="dot">Dot</option>
+                <option value="round">Round</option>
+                <option value="rounded-in">Rounded In</option>
+                <option value="diamond">Diamond</option>
+                <option value="star">Star</option>
+                <option value="mosaic">Mosaic</option>
+                <option value="circular">Circular</option>
+                <option value="leaf">Leaf</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Eye Style</label>
+              <select id="dyn-eye-style">
+                <option value="frame0">Square</option>
+                <option value="frame1">Circle</option>
+                <option value="frame2">Rounded</option>
+                <option value="frame6">Dot</option>
+                <option value="frame13">Leaf</option>
+                <option value="frame16">Star</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>QR Color</label>
+              <div class="color-field">
+                <input type="color" id="dyn-color" value="#000000" />
+                <input type="text" id="dyn-color-hex" value="#000000" maxlength="7" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Background Color</label>
+              <div class="color-field">
+                <input type="color" id="dyn-bg-color" value="#FFFFFF" />
+                <input type="text" id="dyn-bg-color-hex" value="#FFFFFF" maxlength="7" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Logo URL <span class="label-hint">(optional)</span></label>
+            <input type="text" id="dyn-logo" placeholder="https://example.com/logo.png" />
+          </div>
+
           <button class="btn primary" id="dyn-create">Create Dynamic QR</button>
+
           <div id="dyn-result" class="result hidden">
-            <img id="dyn-qr-img" alt="QR Code" />
+            <div class="qr-preview-wrap">
+              <img id="dyn-qr-img" alt="QR Code" />
+            </div>
             <div class="result-info">
               <p><strong>Short URL:</strong> <a id="dyn-short-url" href="#" target="_blank"></a></p>
               <p><strong>Destination:</strong> <span id="dyn-dest"></span></p>
@@ -129,12 +231,11 @@
         </div>
       </section>
 
-      <!-- Manage Tab -->
+      <!-- ── Manage ── -->
       <section id="tab-manage" class="tab hidden">
-        <!-- Dashboard summary -->
         <div id="dashboard-summary" class="summary-row"></div>
 
-        <div class="card" style="margin-top: 1rem">
+        <div class="card" style="margin-top:1rem">
           <div class="card-header">
             <h2>My QR Codes</h2>
             <button class="btn secondary small" id="refresh-list">Refresh</button>
@@ -166,6 +267,53 @@
               <label>Destination URL</label>
               <input type="text" id="edit-dest" />
             </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>QR Color</label>
+                <div class="color-field">
+                  <input type="color" id="edit-color" value="#000000" />
+                  <input type="text" id="edit-color-hex" value="#000000" maxlength="7" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Background</label>
+                <div class="color-field">
+                  <input type="color" id="edit-bg-color" value="#FFFFFF" />
+                  <input type="text" id="edit-bg-color-hex" value="#FFFFFF" maxlength="7" />
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Body Style</label>
+                <select id="edit-body-style">
+                  <option value="square">Square</option>
+                  <option value="dot">Dot</option>
+                  <option value="round">Round</option>
+                  <option value="rounded-in">Rounded In</option>
+                  <option value="diamond">Diamond</option>
+                  <option value="star">Star</option>
+                  <option value="mosaic">Mosaic</option>
+                  <option value="circular">Circular</option>
+                  <option value="leaf">Leaf</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Eye Style</label>
+                <select id="edit-eye-style">
+                  <option value="frame0">Square</option>
+                  <option value="frame1">Circle</option>
+                  <option value="frame2">Rounded</option>
+                  <option value="frame6">Dot</option>
+                  <option value="frame13">Leaf</option>
+                  <option value="frame16">Star</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Logo URL <span class="label-hint">(optional)</span></label>
+              <input type="text" id="edit-logo" placeholder="https://example.com/logo.png" />
+            </div>
             <div class="modal-actions">
               <button class="btn primary" id="edit-save">Save</button>
               <button class="btn ghost" id="edit-cancel">Cancel</button>
@@ -173,6 +321,7 @@
           </div>
         </div>
       </section>
+
     </main>
   </div>
 
