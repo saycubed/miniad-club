@@ -7,117 +7,174 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <div class="logo">MiniAd <span>QR</span></div>
-    <nav>
-      <button class="tab-btn active" data-tab="static">Static QR</button>
-      <button class="tab-btn" data-tab="dynamic">Dynamic QR</button>
-      <button class="tab-btn" data-tab="manage">Manage</button>
-    </nav>
-  </header>
 
-  <main>
-    <!-- Static QR Tab -->
-    <section id="tab-static" class="tab active">
-      <div class="card">
-        <h2>Generate Static QR Code</h2>
-        <p class="subtitle">The QR code permanently encodes the URL you enter. To change the destination, you must create a new QR code.</p>
-        <div class="form-group">
-          <label>URL or Text</label>
-          <input type="text" id="static-url" placeholder="https://example.com" />
+  <!-- ======== AUTH SCREEN ======== -->
+  <div id="auth-screen" class="hidden">
+    <div class="auth-wrap">
+      <div class="auth-logo">MiniAd <span>QR</span></div>
+      <p class="auth-tagline">Create, track, and manage dynamic QR codes</p>
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-auth="login">Sign In</button>
+          <button class="auth-tab" data-auth="signup">Create Account</button>
         </div>
-        <div class="form-row">
+
+        <form id="login-form">
           <div class="form-group">
-            <label>Format</label>
-            <select id="static-format">
-              <option value="png">PNG</option>
-              <option value="svg">SVG</option>
-            </select>
+            <label>Email</label>
+            <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email" />
           </div>
           <div class="form-group">
-            <label>Size (px)</label>
-            <input type="number" id="static-size" value="300" min="100" max="1000" />
+            <label>Password</label>
+            <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
           </div>
-        </div>
-        <button class="btn primary" id="static-generate">Generate QR</button>
-        <div id="static-result" class="result hidden">
-          <img id="static-qr-img" alt="QR Code" />
-          <a id="static-download" class="btn secondary" download="qrcode">Download</a>
-        </div>
+          <button type="submit" class="btn primary full">Sign In</button>
+        </form>
+
+        <form id="signup-form" class="hidden">
+          <div class="form-group">
+            <label>Name (optional)</label>
+            <input type="text" id="signup-name" placeholder="Your name" autocomplete="name" />
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="signup-email" placeholder="you@example.com" autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label>Password <span class="label-hint">(min 8 characters)</span></label>
+            <input type="password" id="signup-password" placeholder="••••••••" autocomplete="new-password" />
+          </div>
+          <button type="submit" class="btn primary full">Create Account</button>
+        </form>
+
+        <div id="auth-error" class="auth-error hidden"></div>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <!-- Dynamic QR Tab -->
-    <section id="tab-dynamic" class="tab hidden">
-      <div class="card">
-        <h2>Create Dynamic QR Code</h2>
-        <p class="subtitle">The QR code points to a short link on this server. You can change the destination anytime without reprinting the QR code.</p>
-        <div class="form-group">
-          <label>Destination URL</label>
-          <input type="text" id="dyn-url" placeholder="https://your-target.com" />
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Label (optional)</label>
-            <input type="text" id="dyn-label" placeholder="Campaign name..." />
-          </div>
-          <div class="form-group">
-            <label>Custom Slug (optional)</label>
-            <input type="text" id="dyn-slug" placeholder="my-link" />
-          </div>
-        </div>
-        <button class="btn primary" id="dyn-create">Create Dynamic QR</button>
-        <div id="dyn-result" class="result hidden">
-          <img id="dyn-qr-img" alt="QR Code" />
-          <div class="result-info">
-            <p><strong>Short URL:</strong> <a id="dyn-short-url" href="#" target="_blank"></a></p>
-            <p><strong>Destination:</strong> <span id="dyn-dest"></span></p>
-          </div>
-          <a id="dyn-download" class="btn secondary" download="dynamic-qrcode.png">Download PNG</a>
-        </div>
+  <!-- ======== APP SCREEN ======== -->
+  <div id="app-screen" class="hidden">
+    <header>
+      <div class="logo">MiniAd <span>QR</span></div>
+      <nav>
+        <button class="tab-btn active" data-tab="static">Static QR</button>
+        <button class="tab-btn" data-tab="dynamic">Dynamic QR</button>
+        <button class="tab-btn" data-tab="manage">My QR Codes</button>
+      </nav>
+      <div class="user-menu">
+        <span class="user-email" id="user-email"></span>
+        <button class="btn ghost small" id="logout-btn">Sign Out</button>
       </div>
-    </section>
+    </header>
 
-    <!-- Manage Tab -->
-    <section id="tab-manage" class="tab hidden">
-      <div class="card">
-        <h2>Manage Dynamic QR Codes</h2>
-        <button class="btn secondary" id="refresh-list" style="margin-bottom:1rem">Refresh</button>
-        <div id="codes-list"></div>
-      </div>
-
-      <!-- Stats Modal -->
-      <div id="stats-modal" class="modal hidden">
-        <div class="modal-box modal-wide">
-          <div class="modal-header">
-            <h3 id="stats-title">Scan Analytics</h3>
-            <button class="btn ghost small" id="stats-close">Close</button>
-          </div>
-          <div id="stats-content"></div>
-        </div>
-      </div>
-
-      <!-- Edit Modal -->
-      <div id="edit-modal" class="modal hidden">
-        <div class="modal-box">
-          <h3>Update QR Code</h3>
-          <input type="hidden" id="edit-slug" />
+    <main>
+      <!-- Static QR Tab -->
+      <section id="tab-static" class="tab active">
+        <div class="card">
+          <h2>Generate Static QR Code</h2>
+          <p class="subtitle">Permanently encodes a URL into the QR image. To change the destination later, use a Dynamic QR instead.</p>
           <div class="form-group">
-            <label>Label</label>
-            <input type="text" id="edit-label" />
+            <label>URL or Text</label>
+            <input type="text" id="static-url" placeholder="https://example.com" />
           </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Format</label>
+              <select id="static-format">
+                <option value="png">PNG</option>
+                <option value="svg">SVG</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Size (px)</label>
+              <input type="number" id="static-size" value="300" min="100" max="1000" />
+            </div>
+          </div>
+          <button class="btn primary" id="static-generate">Generate QR</button>
+          <div id="static-result" class="result hidden">
+            <img id="static-qr-img" alt="QR Code" />
+            <a id="static-download" class="btn secondary" download="qrcode">Download</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dynamic QR Tab -->
+      <section id="tab-dynamic" class="tab hidden">
+        <div class="card">
+          <h2>Create Dynamic QR Code</h2>
+          <p class="subtitle">Points to a short link on this server. You can update the destination anytime — no need to reprint.</p>
           <div class="form-group">
             <label>Destination URL</label>
-            <input type="text" id="edit-dest" />
+            <input type="text" id="dyn-url" placeholder="https://your-target.com" />
           </div>
-          <div class="modal-actions">
-            <button class="btn primary" id="edit-save">Save</button>
-            <button class="btn ghost" id="edit-cancel">Cancel</button>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Label (optional)</label>
+              <input type="text" id="dyn-label" placeholder="Campaign name..." />
+            </div>
+            <div class="form-group">
+              <label>Custom Slug (optional)</label>
+              <input type="text" id="dyn-slug" placeholder="my-link" />
+            </div>
+          </div>
+          <button class="btn primary" id="dyn-create">Create Dynamic QR</button>
+          <div id="dyn-result" class="result hidden">
+            <img id="dyn-qr-img" alt="QR Code" />
+            <div class="result-info">
+              <p><strong>Short URL:</strong> <a id="dyn-short-url" href="#" target="_blank"></a></p>
+              <p><strong>Destination:</strong> <span id="dyn-dest"></span></p>
+            </div>
+            <a id="dyn-download" class="btn secondary" download="dynamic-qrcode.png">Download PNG</a>
           </div>
         </div>
-      </div>
-    </section>
-  </main>
+      </section>
+
+      <!-- Manage Tab -->
+      <section id="tab-manage" class="tab hidden">
+        <!-- Dashboard summary -->
+        <div id="dashboard-summary" class="summary-row"></div>
+
+        <div class="card" style="margin-top: 1rem">
+          <div class="card-header">
+            <h2>My QR Codes</h2>
+            <button class="btn secondary small" id="refresh-list">Refresh</button>
+          </div>
+          <div id="codes-list"></div>
+        </div>
+
+        <!-- Stats Modal -->
+        <div id="stats-modal" class="modal hidden">
+          <div class="modal-box modal-wide">
+            <div class="modal-header">
+              <h3 id="stats-title">Scan Analytics</h3>
+              <button class="btn ghost small" id="stats-close">Close</button>
+            </div>
+            <div id="stats-content"></div>
+          </div>
+        </div>
+
+        <!-- Edit Modal -->
+        <div id="edit-modal" class="modal hidden">
+          <div class="modal-box">
+            <h3>Update QR Code</h3>
+            <input type="hidden" id="edit-slug" />
+            <div class="form-group">
+              <label>Label</label>
+              <input type="text" id="edit-label" />
+            </div>
+            <div class="form-group">
+              <label>Destination URL</label>
+              <input type="text" id="edit-dest" />
+            </div>
+            <div class="modal-actions">
+              <button class="btn primary" id="edit-save">Save</button>
+              <button class="btn ghost" id="edit-cancel">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
   <script src="app.js"></script>
 </body>
