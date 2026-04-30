@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const QRCode = require('qrcode');
+const { createCanvas, loadImage } = require('canvas');
 const Database = require('better-sqlite3');
 const { nanoid } = require('nanoid');
 const cors = require('cors');
@@ -16,7 +17,6 @@ const PORT = process.env.PORT || 3000;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 const REDIRECT_BASE_URL = process.env.REDIRECT_BASE_URL || `${BASE_URL}/r`;
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
-const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY || '';
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const EMAIL_WEBHOOK_SECRET = process.env.EMAIL_WEBHOOK_SECRET || '';
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || '').toLowerCase().trim();
@@ -327,24 +327,106 @@ const logoUpload = multer({
 // QR generation
 // =============================================================================
 
-const QR_API = 'https://qrcode-monkey.p.rapidapi.com/qr/custom';
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function drawDot(ctx, x, y, cell, style) {
+  const pad = cell * 0.1;
+  const s = cell - pad * 2;
+  const cx = x + cell / 2, cy = y + cell / 2;
+  switch (style) {
+    case 'dot':
+      ctx.beginPath(); ctx.arc(cx, cy, s / 2, 0, Math.PI * 2); ctx.fill(); break;
+    case 'round':
+      roundRect(ctx, x + pad, y + pad, s, s, s * 0.3); ctx.fill(); break;
+    case 'rounded-in':
+      roundRect(ctx, x + pad, y + pad, s, s, s * 0.5); ctx.fill(); break;
+    case 'diamond':
+      ctx.beginPath();
+      ctx.moveTo(cx, y + pad); ctx.lineTo(x + cell - pad, cy);
+      ctx.lineTo(cx, y + cell - pad); ctx.lineTo(x + pad, cy);
+      ctx.closePath(); ctx.fill(); break;
+    case 'leaf':
+      roundRect(ctx, x + pad, y + pad, s, s, s * 0.4); ctx.fill(); break;
+    default:
+      ctx.fillRect(x + pad, y + pad, s, s);
+  }
+}
+
+function drawFinder(ctx, x, y, cell, style, color, bgColor) {
+  const total = cell * 7;
+  ctx.fillStyle = color;
+  if (style === 'frame1' || style === 'frame2') {
+    roundRect(ctx, x, y, total, total, total * 0.2); ctx.fill();
+  } else {
+    ctx.fillRect(x, y, total, total);
+  }
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(x + cell, y + cell, total - cell * 2, total - cell * 2);
+  ctx.fillStyle = color;
+  const inner = cell * 2, innerSize = total - cell * 4;
+  if (style === 'frame6') {
+    ctx.beginPath();
+    ctx.arc(x + total / 2, y + total / 2, innerSize / 2, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (style === 'frame1' || style === 'frame2') {
+    roundRect(ctx, x + inner, y + inner, innerSize, innerSize, innerSize * 0.2); ctx.fill();
+  } else {
+    ctx.fillRect(x + inner, y + inner, innerSize, innerSize);
+  }
+}
 
 async function generateQRBuffer(data, opts = {}) {
   const { color = '#000000', bgColor = '#FFFFFF', bodyStyle = 'square', eyeStyle = 'frame0', logo = '', size = 400 } = opts;
-  if (!RAPIDAPI_KEY) return QRCode.toBuffer(data, { type: 'png', width: size, margin: 2 });
-  const config = {
-    body: bodyStyle, eye: eyeStyle, eyeBall: 'ball0',
-    bodyColor: color, bgColor, eye1Color: color, eye2Color: color, eye3Color: color,
-    gradientColor1: '', gradientColor2: '', gradientType: 'linear', gradientOnEyes: 'true',
-    logo: logo || '', logoMode: logo ? 'default' : undefined,
-  };
-  const res = await fetch(QR_API, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-RapidAPI-Key': RAPIDAPI_KEY, 'X-RapidAPI-Host': 'qrcode-monkey.p.rapidapi.com' },
-    body: JSON.stringify({ data, config, size, download: false, file: 'png' }),
-  });
-  if (!res.ok) throw new Error(`QR API ${res.status}: ${await res.text()}`);
-  return Buffer.from(await res.arrayBuffer());
+  const qr = QRCode.create(data, { errorCorrectionLevel: 'M' });
+  const { data: bits, size: count } = qr.modules;
+
+  const canvas = createCanvas(size, size);
+  const ctx = canvas.getContext('2d');
+  const margin = Math.round(size * 0.04);
+  const cell = (size - margin * 2) / count;
+
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, size, size);
+
+  const isFinderZone = (r, c) =>
+    (r < 8 && c < 8) || (r < 8 && c >= count - 8) || (r >= count - 8 && c < 8);
+
+  ctx.fillStyle = color;
+  for (let r = 0; r < count; r++) {
+    for (let c = 0; c < count; c++) {
+      if (!bits[r * count + c] || isFinderZone(r, c)) continue;
+      drawDot(ctx, margin + c * cell, margin + r * cell, cell, bodyStyle);
+    }
+  }
+
+  drawFinder(ctx, margin, margin, cell, eyeStyle, color, bgColor);
+  drawFinder(ctx, margin + (count - 7) * cell, margin, cell, eyeStyle, color, bgColor);
+  drawFinder(ctx, margin, margin + (count - 7) * cell, cell, eyeStyle, color, bgColor);
+
+  if (logo) {
+    try {
+      const img = await loadImage(logo);
+      const ls = size * 0.2;
+      const lx = (size - ls) / 2, ly = (size - ls) / 2;
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(lx - 4, ly - 4, ls + 8, ls + 8);
+      ctx.drawImage(img, lx, ly, ls, ls);
+    } catch { /* skip bad logo */ }
+  }
+
+  return canvas.toBuffer('image/png');
 }
 
 async function generateQRDataUrl(data, opts = {}) {
@@ -737,7 +819,7 @@ app.get('/api/dashboard', auth, (req, res) => {
 
 app.listen(PORT, () => {
   const flags = [
-    RAPIDAPI_KEY ? 'RapidAPI QR' : 'local QR',
+    'styled QR',
     resend ? 'Resend email' : 'no email',
   ];
   console.log(`QR server running at ${BASE_URL} [${flags.join(' · ')}]`);
