@@ -417,13 +417,14 @@ async function generateQRBuffer(data, opts = {}) {
 
   if (logo) {
     try {
-      const img = await loadImage(logo);
+      const logoSrc = logo.startsWith('/uploads/') ? path.join(__dirname, 'public', logo) : logo;
+      const img = await loadImage(logoSrc);
       const ls = size * 0.2;
       const lx = (size - ls) / 2, ly = (size - ls) / 2;
       ctx.fillStyle = bgColor;
       ctx.fillRect(lx - 4, ly - 4, ls + 8, ls + 8);
       ctx.drawImage(img, lx, ly, ls, ls);
-    } catch { /* skip bad logo */ }
+    } catch (e) { console.error('[QR logo]', e.message); }
   }
 
   return canvas.toBuffer('image/png');
