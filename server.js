@@ -358,7 +358,31 @@ function drawDot(ctx, x, y, cell, style) {
       ctx.lineTo(cx, y + cell - pad); ctx.lineTo(x + pad, cy);
       ctx.closePath(); ctx.fill(); break;
     case 'leaf':
-      roundRect(ctx, x + pad, y + pad, s, s, s * 0.4); ctx.fill(); break;
+      ctx.beginPath();
+      ctx.moveTo(cx, y + pad);
+      ctx.quadraticCurveTo(x + cell - pad, y + pad, x + cell - pad, cy);
+      ctx.quadraticCurveTo(x + cell - pad, y + cell - pad, cx, y + cell - pad);
+      ctx.quadraticCurveTo(x + pad, y + cell - pad, x + pad, cy);
+      ctx.quadraticCurveTo(x + pad, y + pad, cx, y + pad);
+      ctx.closePath(); ctx.fill(); break;
+    case 'star': {
+      const outerR = s / 2, innerR = s / 5;
+      ctx.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const a = (i * 4 * Math.PI / 5) - Math.PI / 2;
+        const b = a + Math.PI / 5;
+        i === 0 ? ctx.moveTo(cx + outerR * Math.cos(a), cy + outerR * Math.sin(a))
+                : ctx.lineTo(cx + outerR * Math.cos(a), cy + outerR * Math.sin(a));
+        ctx.lineTo(cx + innerR * Math.cos(b), cy + innerR * Math.sin(b));
+      }
+      ctx.closePath(); ctx.fill(); break;
+    }
+    case 'mosaic':
+      ctx.fillRect(x + cell * 0.15, y + cell * 0.15, cell * 0.7, cell * 0.7); break;
+    case 'circular':
+      ctx.beginPath();
+      ctx.arc(cx, cy, s / 2 + pad * 0.5, 0, Math.PI * 2);
+      ctx.fill(); break;
     default:
       ctx.fillRect(x + pad, y + pad, s, s);
   }
@@ -366,8 +390,9 @@ function drawDot(ctx, x, y, cell, style) {
 
 function drawFinder(ctx, x, y, cell, style, color, bgColor) {
   const total = cell * 7;
+  const cx = x + total / 2, cy = y + total / 2;
   ctx.fillStyle = color;
-  if (style === 'frame1' || style === 'frame2') {
+  if (style === 'frame1' || style === 'frame2' || style === 'frame13') {
     roundRect(ctx, x, y, total, total, total * 0.2); ctx.fill();
   } else {
     ctx.fillRect(x, y, total, total);
@@ -376,10 +401,21 @@ function drawFinder(ctx, x, y, cell, style, color, bgColor) {
   ctx.fillRect(x + cell, y + cell, total - cell * 2, total - cell * 2);
   ctx.fillStyle = color;
   const inner = cell * 2, innerSize = total - cell * 4;
-  if (style === 'frame6') {
+  if (style === 'frame6' || style === 'frame13') {
     ctx.beginPath();
-    ctx.arc(x + total / 2, y + total / 2, innerSize / 2, 0, Math.PI * 2);
+    ctx.arc(cx, cy, innerSize / 2, 0, Math.PI * 2);
     ctx.fill();
+  } else if (style === 'frame16') {
+    const outerR = innerSize / 2, irR = innerSize / 5;
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const a = (i * 4 * Math.PI / 5) - Math.PI / 2;
+      const b = a + Math.PI / 5;
+      i === 0 ? ctx.moveTo(cx + outerR * Math.cos(a), cy + outerR * Math.sin(a))
+              : ctx.lineTo(cx + outerR * Math.cos(a), cy + outerR * Math.sin(a));
+      ctx.lineTo(cx + irR * Math.cos(b), cy + irR * Math.sin(b));
+    }
+    ctx.closePath(); ctx.fill();
   } else if (style === 'frame1' || style === 'frame2') {
     roundRect(ctx, x + inner, y + inner, innerSize, innerSize, innerSize * 0.2); ctx.fill();
   } else {
