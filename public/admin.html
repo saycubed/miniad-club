@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MiniAd QR — Admin</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+  <div id="admin-app" class="hidden">
+
+    <header>
+      <div class="logo">MiniAd <span>QR</span> <span class="admin-chip">Admin</span></div>
+      <nav>
+        <button class="tab-btn active" data-tab="overview">Overview</button>
+        <button class="tab-btn" data-tab="users">Users</button>
+        <button class="tab-btn" data-tab="codes">QR Codes</button>
+        <button class="tab-btn" data-tab="scans">Recent Scans</button>
+        <button class="tab-btn" data-tab="inbox">Inbox <span id="inbox-badge" class="inbox-badge hidden"></span></button>
+      </nav>
+      <div class="user-menu">
+        <span class="user-email" id="admin-email"></span>
+        <a href="/" class="btn ghost small">Main App</a>
+        <button class="btn ghost small" id="logout-btn">Sign Out</button>
+      </div>
+    </header>
+
+    <main>
+
+      <!-- ── Overview ── -->
+      <section id="tab-overview" class="tab active">
+        <div class="admin-overview-grid" id="overview-cards"></div>
+
+        <div class="card" style="margin-top:1.5rem">
+          <h3 class="card-section-title">Platform scans — last 30 days</h3>
+          <div class="bar-chart" id="overview-chart" style="height:120px"></div>
+        </div>
+      </section>
+
+      <!-- ── Users ── -->
+      <section id="tab-users" class="tab hidden">
+        <div class="card">
+          <div class="card-header">
+            <h2>Users</h2>
+            <button class="btn secondary small" id="refresh-users">Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table" id="users-table">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Name</th>
+                  <th>QR Codes</th>
+                  <th>Total Scans</th>
+                  <th>Joined</th>
+                  <th>Admin</th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── QR Codes ── -->
+      <section id="tab-codes" class="tab hidden">
+        <div class="card">
+          <div class="card-header">
+            <h2>All QR Codes <span class="card-hint">(top 200 by scans)</span></h2>
+            <button class="btn secondary small" id="refresh-codes">Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table" id="codes-table">
+              <thead>
+                <tr>
+                  <th>Slug</th>
+                  <th>Label</th>
+                  <th>Owner</th>
+                  <th>Scans</th>
+                  <th>Limit</th>
+                  <th>Expires</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody id="codes-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Recent Scans ── -->
+      <section id="tab-scans" class="tab hidden">
+        <div class="card">
+          <div class="card-header">
+            <h2>Recent Scans <span class="card-hint">(last 50)</span></h2>
+            <button class="btn secondary small" id="refresh-scans">Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table" id="scans-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Slug</th>
+                  <th>Owner</th>
+                  <th>Device</th>
+                  <th>IP</th>
+                </tr>
+              </thead>
+              <tbody id="scans-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Inbox ── -->
+      <section id="tab-inbox" class="tab hidden">
+        <div class="card">
+          <div class="card-header">
+            <h2>Inbox <span id="inbox-unread-label" class="badge badge-info hidden"></span></h2>
+            <button class="btn secondary small" id="refresh-inbox">Refresh</button>
+          </div>
+          <p class="subtitle" style="margin-bottom:1rem">All emails received at @miniad.club.</p>
+          <div id="inbox-list"></div>
+        </div>
+
+        <div id="email-modal" class="modal hidden">
+          <div class="modal-box modal-wide">
+            <div class="modal-header">
+              <div>
+                <h3 id="email-modal-subject" style="margin-bottom:.2rem"></h3>
+                <div id="email-modal-meta" class="email-meta"></div>
+              </div>
+              <button class="btn ghost small" id="email-modal-close">Close</button>
+            </div>
+            <div id="email-modal-body" class="email-body"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Shown while checking auth / if not admin -->
+  <div id="auth-gate" class="auth-wrap hidden">
+    <div class="auth-logo">MiniAd <span>QR</span></div>
+    <div class="auth-card" style="text-align:center;padding:2rem 2.5rem">
+      <p id="gate-message" style="color:var(--muted);font-size:.95rem">Checking access…</p>
+      <a href="/" class="btn primary" style="margin-top:1.25rem;display:inline-block">Go to App</a>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

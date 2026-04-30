@@ -1,0 +1,11 @@
+name = "miniad-email-worker"
+main = "index.js"
+compatibility_date = "2025-01-01"
+
+# Set these as secrets via: wrangler secret put WEBHOOK_SECRET
+# and: wrangler secret put SERVER_URL
+# and: wrangler secret put FORWARD_TO
+
+[vars]
+SERVER_URL = "https://miniad.club"
+FORWARD_TO = "saycubed@gmail.com"

@@ -280,6 +280,8 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     const tab = document.getElementById(`tab-${btn.dataset.tab}`);
     tab.classList.remove('hidden'); tab.classList.add('active');
     if (btn.dataset.tab === 'manage') loadManage();
+    if (btn.dataset.tab === 'inbox') loadInbox();
+    if (btn.dataset.tab === 'settings') loadSettings();
   });
 });
 
@@ -610,6 +612,151 @@ async function openStats(slug) {
     </div>`;
   document.getElementById('stats-modal').classList.remove('hidden');
 }
+
+// =============================================================================
+// Inbox
+// =============================================================================
+
+async function loadInbox() {
+  const res = await fetch(`${API}/api/email/inbox`, { headers: authHeaders() });
+  if (!res.ok) return;
+  const { emails, unread } = await res.json();
+
+  const badge = document.getElementById('inbox-badge');
+  const unreadLabel = document.getElementById('inbox-unread-label');
+  if (unread > 0) {
+    badge.textContent = unread;
+    badge.classList.remove('hidden');
+    unreadLabel.textContent = `${unread} unread`;
+    unreadLabel.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+    unreadLabel.classList.add('hidden');
+  }
+
+  const container = document.getElementById('inbox-list');
+  if (!emails.length) {
+    container.innerHTML = '<div class="empty">No emails yet. Send an email to your @miniad.club address to see it here.</div>';
+    return;
+  }
+  container.innerHTML = emails.map(e => `
+    <div class="inbox-item${e.is_read ? '' : ' inbox-unread'}" data-id="${e.id}">
+      <div class="inbox-item-info" onclick="openEmail(${e.id})">
+        <div class="inbox-from">${escHtml(e.from_addr)}</div>
+        <div class="inbox-subject">${escHtml(e.subject || '(no subject)')}</div>
+        <div class="inbox-date">${new Date(e.received_at * 1000).toLocaleString()}</div>
+      </div>
+      <div class="inbox-actions">
+        <button class="btn danger small" onclick="deleteEmail(${e.id})">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+async function openEmail(id) {
+  const res = await fetch(`${API}/api/email/inbox/${id}`, { headers: authHeaders() });
+  const email = await res.json();
+  if (!res.ok) return;
+
+  document.getElementById('email-modal-subject').textContent = email.subject || '(no subject)';
+  document.getElementById('email-modal-meta').innerHTML =
+    `<span class="email-from">From: ${escHtml(email.from_addr)}</span>` +
+    `<span class="email-date">${new Date(email.received_at * 1000).toLocaleString()}</span>`;
+
+  const bodyEl = document.getElementById('email-modal-body');
+  if (email.body_html) {
+    const iframe = document.createElement('iframe');
+    iframe.className = 'email-iframe';
+    iframe.sandbox = 'allow-same-origin';
+    bodyEl.innerHTML = '';
+    bodyEl.appendChild(iframe);
+    iframe.contentDocument.open();
+    iframe.contentDocument.write(email.body_html);
+    iframe.contentDocument.close();
+    iframe.onload = () => {
+      iframe.style.height = Math.min(iframe.contentDocument.body.scrollHeight + 32, 600) + 'px';
+    };
+  } else {
+    bodyEl.innerHTML = `<pre class="email-text">${escHtml(email.body_text || '')}</pre>`;
+  }
+
+  document.getElementById('email-modal').classList.remove('hidden');
+
+  // Mark as read in the list
+  const item = document.querySelector(`.inbox-item[data-id="${id}"]`);
+  if (item) item.classList.remove('inbox-unread');
+  loadInbox();
+}
+
+async function deleteEmail(id) {
+  if (!confirm('Delete this email?')) return;
+  await fetch(`${API}/api/email/inbox/${id}`, { method: 'DELETE', headers: authHeaders() });
+  loadInbox();
+}
+
+document.getElementById('email-modal-close').addEventListener('click', () => {
+  document.getElementById('email-modal').classList.add('hidden');
+});
+
+document.getElementById('refresh-inbox').addEventListener('click', loadInbox);
+
+// =============================================================================
+// Settings
+// =============================================================================
+
+async function loadSettings() {
+  const res = await fetch(`${API}/api/settings/notifications`, { headers: authHeaders() });
+  if (!res.ok) return;
+  const s = await res.json();
+
+  document.getElementById('notif-scan-enabled').checked = !!s.notif_scan_enabled;
+  document.getElementById('notif-scan-threshold').value = s.notif_scan_threshold || 100;
+  document.getElementById('notif-expiry-enabled').checked = !!s.notif_expiry_enabled;
+  document.getElementById('notif-expiry-hours').value = s.notif_expiry_hours || 24;
+  document.getElementById('notif-email').value = s.notif_email || '';
+
+  document.getElementById('notif-scan-options').classList.toggle('hidden', !s.notif_scan_enabled);
+  document.getElementById('notif-expiry-options').classList.toggle('hidden', !s.notif_expiry_enabled);
+}
+
+document.getElementById('notif-scan-enabled').addEventListener('change', e => {
+  document.getElementById('notif-scan-options').classList.toggle('hidden', !e.target.checked);
+});
+
+document.getElementById('notif-expiry-enabled').addEventListener('change', e => {
+  document.getElementById('notif-expiry-options').classList.toggle('hidden', !e.target.checked);
+});
+
+document.getElementById('settings-save').addEventListener('click', async () => {
+  const btn = document.getElementById('settings-save');
+  const status = document.getElementById('settings-status');
+  btn.disabled = true;
+  const res = await fetch(`${API}/api/settings/notifications`, {
+    method: 'PATCH', headers: authHeaders(),
+    body: JSON.stringify({
+      notif_scan_enabled: document.getElementById('notif-scan-enabled').checked,
+      notif_scan_threshold: parseInt(document.getElementById('notif-scan-threshold').value) || 100,
+      notif_expiry_enabled: document.getElementById('notif-expiry-enabled').checked,
+      notif_expiry_hours: parseInt(document.getElementById('notif-expiry-hours').value) || 24,
+      notif_email: document.getElementById('notif-email').value.trim() || null,
+    }),
+  });
+  btn.disabled = false;
+  status.textContent = res.ok ? 'Saved.' : 'Failed to save.';
+  status.className = 'settings-status ' + (res.ok ? 'settings-ok' : 'settings-err');
+  setTimeout(() => { status.textContent = ''; }, 3000);
+});
+
+document.getElementById('settings-test-email').addEventListener('click', async () => {
+  const btn = document.getElementById('settings-test-email');
+  const status = document.getElementById('settings-status');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  const res = await fetch(`${API}/api/email/test`, { method: 'POST', headers: authHeaders() });
+  btn.disabled = false; btn.textContent = 'Send Test Email';
+  const data = await res.json();
+  status.textContent = res.ok ? 'Test email sent!' : (data.error || 'Failed.');
+  status.className = 'settings-status ' + (res.ok ? 'settings-ok' : 'settings-err');
+  setTimeout(() => { status.textContent = ''; }, 4000);
+});
 
 // =============================================================================
 // Boot
