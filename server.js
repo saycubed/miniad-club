@@ -531,6 +531,24 @@ app.use((err, req, res, next) => {
 });
 
 // =============================================================================
+// Advertiser enquiry form (public)
+// =============================================================================
+
+app.post('/api/enquiry', async (req, res) => {
+  const { name, company, email, phone, message, package: pkg } = req.body;
+  if (!name || !email) return res.status(400).json({ error: 'Name and email are required' });
+  if (resend && ADMIN_EMAIL) {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: ADMIN_EMAIL,
+      subject: `New enquiry from ${name}${company ? ` (${company})` : ''}`,
+      html: `<p><b>Name:</b> ${name}</p><p><b>Company:</b> ${company || '—'}</p><p><b>Email:</b> ${email}</p><p><b>Phone:</b> ${phone || '—'}</p><p><b>Package interest:</b> ${pkg || '—'}</p><p><b>Message:</b><br>${(message || '').replace(/\n/g, '<br>')}</p>`,
+    }).catch(e => console.error('[Enquiry email]', e.message));
+  }
+  res.json({ ok: true });
+});
+
+// =============================================================================
 // Email — inbound webhook (called by Cloudflare Worker)
 // =============================================================================
 

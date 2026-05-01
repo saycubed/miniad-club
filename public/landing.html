@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MiniAd — Reach 4,000 Ma Wan Homes</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple: #7c6af7;
+      --purple-dark: #6254d4;
+      --purple-light: #f0eeff;
+      --dark: #1a1831;
+      --mid: #4a4769;
+      --light: #f7f7fc;
+      --white: #ffffff;
+      --radius: 14px;
+    }
+
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--dark); background: var(--white); line-height: 1.6; }
+
+    /* NAV */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #ececf8; padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .logo { font-size: 1.4rem; font-weight: 800; color: var(--purple); letter-spacing: -0.5px; }
+    .logo span { color: var(--dark); }
+    nav a.cta { background: var(--purple); color: #fff; padding: 9px 22px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: background 0.2s; }
+    nav a.cta:hover { background: var(--purple-dark); }
+
+    /* HERO */
+    .hero { background: linear-gradient(135deg, #1a1831 0%, #2d2660 100%); color: #fff; padding: 100px 5% 80px; text-align: center; }
+    .hero-badge { display: inline-block; background: rgba(124,106,247,0.3); border: 1px solid rgba(124,106,247,0.5); color: #c4beff; padding: 6px 16px; border-radius: 100px; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 28px; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 800; line-height: 1.15; max-width: 780px; margin: 0 auto 20px; letter-spacing: -1px; }
+    .hero h1 em { color: #a89fff; font-style: normal; }
+    .hero p { font-size: 1.15rem; color: #b0aed4; max-width: 560px; margin: 0 auto 40px; }
+    .hero-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { background: var(--purple); color: #fff; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 1rem; transition: background 0.2s, transform 0.1s; }
+    .btn-primary:hover { background: var(--purple-dark); transform: translateY(-1px); }
+    .btn-ghost { background: rgba(255,255,255,0.1); color: #fff; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 1rem; border: 1px solid rgba(255,255,255,0.2); transition: background 0.2s; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.18); }
+
+    /* STATS BAR */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--purple); color: #fff; }
+    .stat { padding: 28px 20px; text-align: center; border-right: 1px solid rgba(255,255,255,0.15); }
+    .stat:last-child { border-right: none; }
+    .stat-num { font-size: 2rem; font-weight: 800; display: block; letter-spacing: -1px; }
+    .stat-label { font-size: 0.82rem; opacity: 0.8; margin-top: 2px; }
+
+    /* SECTIONS */
+    section { padding: 80px 5%; }
+    .section-label { color: var(--purple); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
+    h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; letter-spacing: -0.5px; margin-bottom: 14px; }
+    .section-sub { color: var(--mid); font-size: 1.05rem; max-width: 580px; }
+
+    /* HOW IT WORKS */
+    .how { background: var(--light); }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 28px; margin-top: 50px; }
+    .step { background: var(--white); border-radius: var(--radius); padding: 32px 28px; border: 1px solid #e8e6f8; }
+    .step-num { width: 44px; height: 44px; border-radius: 12px; background: var(--purple-light); color: var(--purple); font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+    .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .step p { color: var(--mid); font-size: 0.92rem; line-height: 1.6; }
+
+    /* WHY IT WORKS */
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; margin-top: 20px; }
+    .why-features { display: flex; flex-direction: column; gap: 20px; margin-top: 30px; }
+    .why-feature { display: flex; gap: 16px; align-items: flex-start; }
+    .why-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--purple-light); color: var(--purple); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .why-feature h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; }
+    .why-feature p { color: var(--mid); font-size: 0.88rem; }
+    .why-visual { background: linear-gradient(135deg, #1a1831, #2d2660); border-radius: 20px; padding: 40px; color: #fff; text-align: center; }
+    .why-visual-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #a89fff; margin-bottom: 20px; font-weight: 600; }
+    .content-tags { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .tag { background: rgba(124,106,247,0.25); border: 1px solid rgba(124,106,247,0.4); color: #c4beff; padding: 7px 14px; border-radius: 100px; font-size: 0.83rem; font-weight: 500; }
+    .tag.highlight { background: var(--purple); border-color: var(--purple); color: #fff; }
+
+    /* PRICING */
+    .pricing { background: var(--light); }
+    .pricing-intro { max-width: 600px; margin-bottom: 50px; }
+    .pricing-area { display: inline-flex; align-items: center; gap: 8px; background: var(--purple-light); color: var(--purple); padding: 8px 16px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; margin-bottom: 14px; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+    .price-card { background: var(--white); border-radius: var(--radius); padding: 36px; border: 2px solid #e8e6f8; position: relative; }
+    .price-card.featured { border-color: var(--purple); }
+    .price-badge { position: absolute; top: -13px; left: 28px; background: var(--purple); color: #fff; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .price-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+    .price-card .desc { color: var(--mid); font-size: 0.88rem; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #eee; }
+    .price-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+    .price-row .label { color: var(--mid); font-size: 0.88rem; }
+    .price-row .amount { font-size: 1.25rem; font-weight: 800; color: var(--dark); }
+    .price-row .amount small { font-size: 0.8rem; font-weight: 500; color: var(--mid); }
+    .price-row.bundle .amount { color: var(--purple); }
+    .saving { display: inline-block; background: #edfff4; color: #1a8a4a; font-size: 0.78rem; font-weight: 600; padding: 3px 10px; border-radius: 100px; margin-top: 12px; }
+    .price-perks { margin-top: 24px; display: flex; flex-direction: column; gap: 8px; }
+    .perk { display: flex; gap: 8px; font-size: 0.88rem; color: var(--mid); }
+    .perk::before { content: '✓'; color: var(--purple); font-weight: 700; flex-shrink: 0; }
+    .price-cta { display: block; text-align: center; margin-top: 28px; background: var(--purple); color: #fff; padding: 12px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: background 0.2s; }
+    .price-cta:hover { background: var(--purple-dark); }
+    .price-card:not(.featured) .price-cta { background: transparent; color: var(--purple); border: 2px solid var(--purple); }
+    .price-card:not(.featured) .price-cta:hover { background: var(--purple-light); }
+    .pricing-note { margin-top: 24px; color: var(--mid); font-size: 0.85rem; text-align: center; }
+
+    /* QR FEATURE */
+    .qr-feature { background: linear-gradient(135deg, #1a1831 0%, #2d2660 100%); color: #fff; }
+    .qr-feature .section-label { color: #a89fff; }
+    .qr-feature h2 { color: #fff; }
+    .qr-feature .section-sub { color: #b0aed4; }
+    .qr-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 50px; }
+    .qr-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius); padding: 28px; }
+    .qr-card-icon { font-size: 1.6rem; margin-bottom: 14px; }
+    .qr-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .qr-card p { font-size: 0.85rem; color: #b0aed4; line-height: 1.5; }
+
+    /* CONTACT */
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 60px; align-items: start; margin-top: 10px; }
+    .contact-info h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; }
+    .contact-info p { color: var(--mid); font-size: 0.95rem; margin-bottom: 30px; }
+    .contact-detail { display: flex; flex-direction: column; gap: 14px; }
+    .contact-detail-item { display: flex; gap: 12px; align-items: center; }
+    .contact-detail-item .icon { width: 38px; height: 38px; background: var(--purple-light); border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--purple); font-size: 1rem; flex-shrink: 0; }
+    .contact-detail-item span { font-size: 0.9rem; color: var(--mid); }
+    form { display: flex; flex-direction: column; gap: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    label { font-size: 0.82rem; font-weight: 600; color: var(--mid); display: block; margin-bottom: 5px; }
+    input, select, textarea { width: 100%; padding: 11px 14px; border: 1.5px solid #dddaf5; border-radius: 9px; font-size: 0.93rem; font-family: inherit; color: var(--dark); background: var(--white); outline: none; transition: border-color 0.2s; }
+    input:focus, select:focus, textarea:focus { border-color: var(--purple); }
+    textarea { min-height: 110px; resize: vertical; }
+    .submit-btn { background: var(--purple); color: #fff; border: none; padding: 13px 28px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: background 0.2s; align-self: flex-start; }
+    .submit-btn:hover { background: var(--purple-dark); }
+    .submit-btn:disabled { opacity: 0.6; cursor: default; }
+    .form-msg { font-size: 0.9rem; padding: 10px 14px; border-radius: 8px; display: none; }
+    .form-msg.success { background: #edfff4; color: #1a6a3a; display: block; }
+    .form-msg.error { background: #fff0f0; color: #a02020; display: block; }
+
+    /* FOOTER */
+    footer { background: var(--dark); color: #6e6c8e; padding: 36px 5%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    footer .logo { color: #a89fff; }
+    footer .logo span { color: #6e6c8e; }
+    footer p { font-size: 0.82rem; }
+    footer a { color: var(--purple); text-decoration: none; }
+
+    @media (max-width: 768px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.15); }
+      .why-grid, .contact-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .why-visual { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Mini<span>Ad</span></div>
+  <a href="#contact" class="cta">Enquire Now</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">📮 Hong Kong Post Circular Service</div>
+  <h1>Put Your Business in <em>4,000 Ma Wan Homes</em></h1>
+  <p>A premium printed leaflet that residents actually keep — packed with local trivia, puzzles, and horoscopes alongside your ad.</p>
+  <div class="hero-ctas">
+    <a href="#contact" class="btn-primary">Enquire About Ad Space</a>
+    <a href="#how" class="btn-ghost">How It Works</a>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><span class="stat-num">4,000</span><span class="stat-label">Homes Reached</span></div>
+  <div class="stat"><span class="stat-num">10</span><span class="stat-label">Ad Spots Per Leaflet</span></div>
+  <div class="stat"><span class="stat-num">Ma Wan</span><span class="stat-label">Park Island Towers</span></div>
+  <div class="stat"><span class="stat-num">HK Post</span><span class="stat-label">Official Delivery</span></div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-label">How It Works</div>
+  <h2>Simple, Reliable, Measurable</h2>
+  <p class="section-sub">We handle everything from design to delivery — and give you real data on how your ad performed.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Book Your Spot</h3>
+      <p>Choose a standard or double-sized placement on the front or back of the leaflet. Only 10 spots available per issue.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>We Design &amp; Print</h3>
+      <p>Send us your artwork or we can help design it. The leaflet is professionally printed and prepared for distribution.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>HK Post Delivers</h3>
+      <p>Every copy is delivered by Hong Kong Post's official circular service directly to 4,000 Park Island homes in Ma Wan.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3>Track Your Results</h3>
+      <p>Your ad includes a dynamic QR code. Log in to your dashboard to see real-time scan counts and engagement data.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHY IT WORKS -->
+<section>
+  <div class="why-grid">
+    <div>
+      <div class="section-label">Why It Works</div>
+      <h2>Leaflets People Actually Read</h2>
+      <p class="section-sub">Most flyers go straight from the letterbox to the bin. Ours are different — they earn their place in the home.</p>
+      <div class="why-features">
+        <div class="why-feature">
+          <div class="why-icon">🧩</div>
+          <div>
+            <h4>Editorial Content That Captures Attention</h4>
+            <p>Every issue features local trivia, puzzles, games, and horoscopes that residents look forward to — turning your ad into something they keep.</p>
+          </div>
+        </div>
+        <div class="why-feature">
+          <div class="why-icon">📍</div>
+          <div>
+            <h4>Hyper-Local Targeting</h4>
+            <p>Ma Wan is a contained community. Reach residents who live, shop, and spend locally — with no wasted impressions.</p>
+          </div>
+        </div>
+        <div class="why-feature">
+          <div class="why-icon">📊</div>
+          <div>
+            <h4>Proof of Performance</h4>
+            <p>Unlike traditional print, your QR code tells you exactly how many people engaged with your ad, by day and over time.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="why-visual">
+      <div class="why-visual-title">Every Issue Includes</div>
+      <div class="content-tags">
+        <span class="tag highlight">Local Trivia</span>
+        <span class="tag">Word Puzzles</span>
+        <span class="tag highlight">Horoscopes</span>
+        <span class="tag">Sudoku</span>
+        <span class="tag">Community News</span>
+        <span class="tag highlight">Crosswords</span>
+        <span class="tag">Brain Teasers</span>
+        <span class="tag">Seasonal Tips</span>
+        <span class="tag highlight">Photo Contest</span>
+        <span class="tag">Recipe Corner</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="section-label">Advertising Packages</div>
+  <div class="pricing-intro">
+    <h2>Transparent, Simple Pricing</h2>
+    <p class="section-sub">All placements include a dynamic QR code with a real-time scan dashboard. Double placements are available on request.</p>
+  </div>
+  <div class="pricing-area">📍 Ma Wan · Park Island · 4,000 homes</div>
+  <br><br>
+  <div class="pricing-grid">
+
+    <div class="price-card">
+      <h3>Standard Spot</h3>
+      <p class="desc">Single ad placement — front or back of leaflet. 5 available per side.</p>
+      <div class="price-row">
+        <span class="label">Monthly rate</span>
+        <span class="amount">HK$1,000 <small>/mo</small></span>
+      </div>
+      <div class="price-row bundle">
+        <span class="label">4-month bundle</span>
+        <span class="amount">HK$3,500 <small>total</small></span>
+      </div>
+      <span class="saving">Save HK$500 with 4-month commitment</span>
+      <div class="price-perks">
+        <div class="perk">Front or back placement</div>
+        <div class="perk">Dynamic QR code included</div>
+        <div class="perk">Real-time scan dashboard</div>
+        <div class="perk">4,000 home distribution</div>
+      </div>
+      <a href="#contact" class="price-cta">Enquire Now</a>
+    </div>
+
+    <div class="price-card featured">
+      <div class="price-badge">Most Impactful</div>
+      <h3>Double Spot</h3>
+      <p class="desc">Twice the space, twice the impact. Negotiated placement for maximum visibility.</p>
+      <div class="price-row">
+        <span class="label">Monthly rate</span>
+        <span class="amount">HK$1,750 <small>/mo</small></span>
+      </div>
+      <div class="price-row bundle">
+        <span class="label">4-month bundle</span>
+        <span class="amount">HK$6,500 <small>total</small></span>
+      </div>
+      <span class="saving">Save HK$500 with 4-month commitment</span>
+      <div class="price-perks">
+        <div class="perk">Double-sized premium placement</div>
+        <div class="perk">Dynamic QR code included</div>
+        <div class="perk">Real-time scan dashboard</div>
+        <div class="perk">4,000 home distribution</div>
+        <div class="perk">Priority position negotiation</div>
+      </div>
+      <a href="#contact" class="price-cta">Enquire Now</a>
+    </div>
+
+  </div>
+  <p class="pricing-note">Spots are limited to 10 per leaflet. Contact us to check availability for upcoming issues.</p>
+</section>
+
+<!-- QR FEATURE -->
+<section class="qr-feature">
+  <div class="section-label">Included Free</div>
+  <h2>Know Exactly How Your Ad Performed</h2>
+  <p class="section-sub">Every ad spot comes with a dynamic QR code and access to a live dashboard — something most print media simply can't offer.</p>
+  <div class="qr-cards">
+    <div class="qr-card">
+      <div class="qr-card-icon">📈</div>
+      <h4>Real-Time Scan Counts</h4>
+      <p>See how many people scanned your QR code, updated live as scans happen.</p>
+    </div>
+    <div class="qr-card">
+      <div class="qr-card-icon">📅</div>
+      <h4>Day-by-Day Breakdown</h4>
+      <p>Track engagement over the life of the campaign to see peak interest periods.</p>
+    </div>
+    <div class="qr-card">
+      <div class="qr-card-icon">🔗</div>
+      <h4>Change Your Destination</h4>
+      <p>Update where your QR code points at any time — without reprinting the leaflet.</p>
+    </div>
+    <div class="qr-card">
+      <div class="qr-card-icon">🎨</div>
+      <h4>Custom Branded QR</h4>
+      <p>Match your QR code colours and style to your brand, with your logo embedded.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-grid">
+    <div class="contact-info">
+      <div class="section-label">Get In Touch</div>
+      <h3>Reserve Your Ad Spot</h3>
+      <p>Spots sell out fast — each leaflet has only 10. Get in touch to check availability for the next Ma Wan drop.</p>
+      <div class="contact-detail">
+        <div class="contact-detail-item">
+          <div class="icon">📍</div>
+          <span>Ma Wan, Park Island — 4,000 homes</span>
+        </div>
+        <div class="contact-detail-item">
+          <div class="icon">📮</div>
+          <span>Delivered by Hong Kong Post circular service</span>
+        </div>
+        <div class="contact-detail-item">
+          <div class="icon">✉️</div>
+          <span>We'll respond within 1 business day</span>
+        </div>
+      </div>
+    </div>
+    <form id="enquiry-form">
+      <div class="form-row">
+        <div>
+          <label for="name">Your Name *</label>
+          <input type="text" id="name" name="name" required placeholder="Chan Tai Man">
+        </div>
+        <div>
+          <label for="company">Company / Business</label>
+          <input type="text" id="company" name="company" placeholder="ABC Restaurant">
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" required placeholder="you@example.com">
+        </div>
+        <div>
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone" placeholder="+852 9XXX XXXX">
+        </div>
+      </div>
+      <div>
+        <label for="package">Package Interest</label>
+        <select id="package" name="package">
+          <option value="">— Select a package —</option>
+          <option value="Standard (HK$1,000/month)">Standard spot — HK$1,000/month</option>
+          <option value="Standard 4-month (HK$3,500)">Standard spot — HK$3,500 for 4 months</option>
+          <option value="Double (HK$1,750/month)">Double spot — HK$1,750/month</option>
+          <option value="Double 4-month (HK$6,500)">Double spot — HK$6,500 for 4 months</option>
+          <option value="Not sure yet">Not sure yet</option>
+        </select>
+      </div>
+      <div>
+        <label for="message">Message</label>
+        <textarea id="message" name="message" placeholder="Tell us about your business and what you'd like to promote…"></textarea>
+      </div>
+      <div class="form-msg" id="form-msg"></div>
+      <button type="submit" class="submit-btn" id="submit-btn">Send Enquiry</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Mini<span>Ad</span></div>
+  <p>Hyperlocal print advertising for Ma Wan, Hong Kong</p>
+  <p>Powered by <a href="https://qr.miniad.club">QR Dashboard</a></p>
+</footer>
+
+<script>
+  document.getElementById('enquiry-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    const msg = document.getElementById('form-msg');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    msg.className = 'form-msg';
+    msg.style.display = 'none';
+    try {
+      const res = await fetch('https://qr.miniad.club/api/enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: document.getElementById('name').value,
+          company: document.getElementById('company').value,
+          email: document.getElementById('email').value,
+          phone: document.getElementById('phone').value,
+          package: document.getElementById('package').value,
+          message: document.getElementById('message').value,
+        }),
+      });
+      if (!res.ok) throw new Error('Server error');
+      msg.className = 'form-msg success';
+      msg.textContent = '✓ Enquiry sent! We\'ll be in touch within 1 business day.';
+      this.reset();
+    } catch {
+      msg.className = 'form-msg error';
+      msg.textContent = 'Something went wrong — please email us directly.';
+    }
+    btn.disabled = false;
+    btn.textContent = 'Send Enquiry';
+  });
+</script>
+
+</body>
+</html>
