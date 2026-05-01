@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-HK">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MiniAd QR — QR Code Maker</title>
+  <title>MiniAd QR — QR碼製作工具</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -12,11 +12,11 @@
   <div id="auth-screen" class="hidden">
     <div class="auth-wrap">
       <div class="auth-logo">MiniAd <span>QR</span></div>
-      <p class="auth-tagline">Create, track, and manage dynamic QR codes</p>
+      <p class="auth-tagline">Create, track, and manage dynamic QR codes<span class="zh">建立、追蹤同管理動態QR碼</span></p>
       <div class="auth-card">
         <div class="auth-tabs">
-          <button class="auth-tab active" data-auth="login">Sign In</button>
-          <button class="auth-tab" data-auth="signup">Create Account</button>
+          <button class="auth-tab active" data-auth="login">Sign In <span class="zh">登入</span></button>
+          <button class="auth-tab" data-auth="signup">Create Account <span class="zh">建立帳戶</span></button>
         </div>
         <form id="login-form">
           <div class="form-group">
@@ -54,11 +54,11 @@
     <header>
       <div class="logo">MiniAd <span>QR</span></div>
       <nav>
-        <button class="tab-btn active" data-tab="static">Static QR</button>
-        <button class="tab-btn" data-tab="dynamic">Dynamic QR</button>
-        <button class="tab-btn" data-tab="manage">My QR Codes</button>
-        <button class="tab-btn" data-tab="inbox">Inbox <span id="inbox-badge" class="inbox-badge hidden"></span></button>
-        <button class="tab-btn" data-tab="settings">Settings</button>
+        <button class="tab-btn active" data-tab="static">Static QR <span class="zh">靜態QR碼</span></button>
+        <button class="tab-btn" data-tab="dynamic">Dynamic QR <span class="zh">動態QR碼</span></button>
+        <button class="tab-btn" data-tab="manage">My QR Codes <span class="zh">我嘅QR碼</span></button>
+        <button class="tab-btn" data-tab="inbox">Inbox <span id="inbox-badge" class="inbox-badge hidden"></span><span class="zh">收件箱</span></button>
+        <button class="tab-btn" data-tab="settings">Settings <span class="zh">設定</span></button>
       </nav>
       <div class="user-menu">
         <span class="user-email" id="user-email"></span>
@@ -71,8 +71,8 @@
       <!-- ── Static QR ── -->
       <section id="tab-static" class="tab active">
         <div class="card">
-          <h2>Generate Static QR Code</h2>
-          <p class="subtitle">Permanently encodes a URL. To change the destination later, use a Dynamic QR instead.</p>
+          <h2>Generate Static QR Code<span class="zh">生成靜態QR碼</span></h2>
+          <p class="subtitle">Permanently encodes a URL. To change the destination later, use a Dynamic QR instead.<span class="zh">永久編碼網址。如需日後更改目標，請改用動態QR碼。</span></p>
 
           <div class="form-group">
             <label>URL or Text</label>
@@ -152,8 +152,8 @@
       <!-- ── Dynamic QR ── -->
       <section id="tab-dynamic" class="tab hidden">
         <div class="card">
-          <h2>Create Dynamic QR Code</h2>
-          <p class="subtitle">Points to a short link you can update anytime — no need to reprint.</p>
+          <h2>Create Dynamic QR Code<span class="zh">建立動態QR碼</span></h2>
+          <p class="subtitle">Points to a short link you can update anytime — no need to reprint.<span class="zh">指向可隨時更新嘅短網址——無需重新印刷。</span></p>
 
           <div class="form-group">
             <label>Destination URL</label>
@@ -266,7 +266,7 @@
 
         <div class="card" style="margin-top:1rem">
           <div class="card-header">
-            <h2>My QR Codes</h2>
+            <h2>My QR Codes<span class="zh">我嘅QR碼</span></h2>
             <button class="btn secondary small" id="refresh-list">Refresh</button>
           </div>
           <div id="codes-list"></div>
@@ -382,7 +382,7 @@
             <h2>Inbox <span id="inbox-unread-label" class="badge badge-info hidden"></span></h2>
             <button class="btn secondary small" id="refresh-inbox">Refresh</button>
           </div>
-          <p class="subtitle" style="margin-bottom:1rem">Emails received at your @miniad.club address.</p>
+          <p class="subtitle" style="margin-bottom:1rem">Emails received at your @miniad.club address.<span class="zh">接收至您 @miniad.club 地址嘅電郵。</span></p>
           <div id="inbox-list"></div>
         </div>
 
@@ -404,14 +404,14 @@
       <!-- ── Settings ── -->
       <section id="tab-settings" class="tab hidden">
         <div class="card">
-          <h2>Notification Settings</h2>
-          <p class="subtitle" style="margin-bottom:1.5rem">Configure email alerts sent to your notification address.</p>
+          <h2>Notification Settings<span class="zh">通知設定</span></h2>
+          <p class="subtitle" style="margin-bottom:1.5rem">Configure email alerts sent to your notification address.<span class="zh">設定發送至您通知地址嘅電郵提醒。</span></p>
 
           <div class="settings-group">
             <div class="settings-row">
               <div>
-                <div class="settings-label">Scan milestone alert</div>
-                <div class="settings-hint">Get notified when a QR code reaches a scan threshold.</div>
+                <div class="settings-label">Scan milestone alert<span class="zh">掃描里程碑提醒</span></div>
+                <div class="settings-hint">Get notified when a QR code reaches a scan threshold.<span class="zh">當QR碼達到指定掃描次數時通知您。</span></div>
               </div>
               <label class="toggle">
                 <input type="checkbox" id="notif-scan-enabled" />
@@ -429,8 +429,8 @@
           <div class="settings-group">
             <div class="settings-row">
               <div>
-                <div class="settings-label">Expiry warning</div>
-                <div class="settings-hint">Get notified before a QR code expires.</div>
+                <div class="settings-label">Expiry warning<span class="zh">到期警告</span></div>
+                <div class="settings-hint">Get notified before a QR code expires.<span class="zh">QR碼到期前通知您。</span></div>
               </div>
               <label class="toggle">
                 <input type="checkbox" id="notif-expiry-enabled" />

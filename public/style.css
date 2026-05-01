@@ -1,4 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.zh {
+  font-family: 'Noto Sans TC', sans-serif;
+  display: block;
+  font-size: 0.72em;
+  opacity: 0.55;
+  margin-top: 2px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
 
 :root {
   --bg: #0f0f13;
