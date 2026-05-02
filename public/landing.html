@@ -3,431 +3,822 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MiniAd — 觸達4,000個馬灣家庭</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <title>The Ma Wan Gazette · MiniAd Advertising</title>
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --purple: #7c6af7;
-      --purple-dark: #6254d4;
-      --purple-light: #f0eeff;
-      --dark: #1a1831;
-      --mid: #4a4769;
-      --light: #f7f7fc;
-      --white: #ffffff;
-      --radius: 14px;
+      --ink:    #1a1209;
+      --paper:  #f4efe3;
+      --paper2: #ede8d6;
+      --rule:   #1a1209;
+      --mid:    #4a3f2e;
+      --light:  #c8bfa8;
+      --white:  #faf6ec;
     }
 
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--dark); background: var(--white); line-height: 1.6; }
+    html { scroll-behavior: smooth; }
 
-    .zh { font-family: 'Noto Sans TC', sans-serif; display: block; font-size: 0.72em; opacity: 0.68; margin-top: 4px; font-weight: 500; letter-spacing: 0.5px; }
-    h1 .zh { font-size: 0.52em; opacity: 0.75; margin-top: 10px; }
-    h2 .zh { font-size: 0.6em; margin-top: 6px; }
-    h3 .zh { font-size: 0.7em; margin-top: 4px; }
-    .section-label .zh { font-size: 1em; }
-    .stat-label .zh { font-size: 0.95em; opacity: 0.8; margin-top: 1px; }
-    label .zh { display: inline; font-size: 0.85em; color: inherit; opacity: 0.6; margin-left: 4px; }
+    body {
+      font-family: 'Crimson Text', Georgia, serif;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 17px;
+      line-height: 1.65;
+    }
 
-    /* NAV */
-    nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #ececf8; padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 64px; }
-    .logo { font-size: 1.4rem; font-weight: 800; color: var(--purple); letter-spacing: -0.5px; }
-    .logo span { color: var(--dark); }
-    nav a.cta { background: var(--purple); color: #fff; padding: 9px 22px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: background 0.2s; }
-    nav a.cta:hover { background: var(--purple-dark); }
+    /* ── UTILITIES ── */
+    .zh {
+      font-family: 'Noto Sans TC', sans-serif;
+      display: block;
+      font-size: 0.68em;
+      opacity: 0.65;
+      margin-top: 3px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+    h1 .zh, h2 .zh { font-size: 0.52em; }
+    .zh-inline { font-family: 'Noto Sans TC', sans-serif; font-size: 0.85em; opacity: 0.7; }
 
-    /* HERO */
-    .hero { background: linear-gradient(135deg, #1a1831 0%, #2d2660 100%); color: #fff; padding: 100px 5% 80px; text-align: center; }
-    .hero-badge { display: inline-block; background: rgba(124,106,247,0.3); border: 1px solid rgba(124,106,247,0.5); color: #c4beff; padding: 6px 16px; border-radius: 100px; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 28px; }
-    .hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 800; line-height: 1.15; max-width: 780px; margin: 0 auto 20px; letter-spacing: -1px; }
-    .hero h1 em { color: #a89fff; font-style: normal; }
-    .hero p { font-size: 1.15rem; color: #b0aed4; max-width: 560px; margin: 0 auto 40px; }
-    .hero-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-    .btn-primary { background: var(--purple); color: #fff; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 1rem; transition: background 0.2s, transform 0.1s; }
-    .btn-primary:hover { background: var(--purple-dark); transform: translateY(-1px); }
-    .btn-ghost { background: rgba(255,255,255,0.1); color: #fff; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 1rem; border: 1px solid rgba(255,255,255,0.2); transition: background 0.2s; }
-    .btn-ghost:hover { background: rgba(255,255,255,0.18); }
+    hr.rule { border: none; border-top: 1px solid var(--rule); margin: 0; }
+    hr.rule-thick { border: none; border-top: 3px solid var(--rule); margin: 0; }
+    hr.rule-double {
+      border: none;
+      border-top: 4px double var(--rule);
+      margin: 0;
+    }
 
-    /* STATS BAR */
-    .stats { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--purple); color: #fff; }
-    .stat { padding: 28px 20px; text-align: center; border-right: 1px solid rgba(255,255,255,0.15); }
-    .stat:last-child { border-right: none; }
-    .stat-num { font-size: 2rem; font-weight: 800; display: block; letter-spacing: -1px; }
-    .stat-label { font-size: 0.82rem; opacity: 0.8; margin-top: 2px; }
+    /* ── SCROLL ANIMATIONS ── */
+    .col-animate {
+      opacity: 0;
+      transform: translateY(56px);
+      transition: opacity 0.75s cubic-bezier(.22,.68,0,1.2), transform 0.75s cubic-bezier(.22,.68,0,1.2);
+    }
+    .col-from-left  { transform: translateX(-56px) translateY(20px); }
+    .col-from-right { transform: translateX(56px) translateY(20px); }
+    .col-from-top   { transform: translateY(-40px); }
+    .col-animate.in-view {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+    .col-animate:nth-child(2) { transition-delay: 0.12s; }
+    .col-animate:nth-child(3) { transition-delay: 0.24s; }
+    .col-animate:nth-child(4) { transition-delay: 0.36s; }
 
-    /* SECTIONS */
-    section { padding: 80px 5%; }
-    .section-label { color: var(--purple); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
-    h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; letter-spacing: -0.5px; margin-bottom: 14px; }
-    .section-sub { color: var(--mid); font-size: 1.05rem; max-width: 580px; }
+    /* ── MASTHEAD ── */
+    .masthead {
+      background: var(--paper);
+      padding: 0 4%;
+      border-bottom: 3px solid var(--ink);
+    }
+    .masthead-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0 8px;
+      font-size: 0.72rem;
+      font-family: 'Crimson Text', serif;
+      font-style: italic;
+      color: var(--mid);
+      border-bottom: 1px solid var(--rule);
+    }
+    .masthead-title {
+      text-align: center;
+      padding: 18px 0 14px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .masthead-flag {
+      font-family: 'UnifrakturMaguntia', cursive;
+      font-size: clamp(2.8rem, 6vw, 5.2rem);
+      line-height: 1;
+      letter-spacing: -1px;
+      color: var(--ink);
+      display: block;
+    }
+    .masthead-sub {
+      font-family: 'Crimson Text', serif;
+      font-size: 0.82rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-top: 4px;
+      display: block;
+    }
+    .masthead-bottom {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 16px;
+      padding: 8px 0;
+      font-size: 0.75rem;
+      font-family: 'Crimson Text', serif;
+      font-style: italic;
+      color: var(--mid);
+    }
+    .masthead-bottom .center { text-align: center; font-style: normal; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; }
+    .masthead-bottom .right { text-align: right; }
+    .masthead-cta {
+      display: inline-block;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: 'Crimson Text', serif;
+      font-style: normal;
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .masthead-cta:hover { background: #3a2f1e; }
 
-    /* HOW IT WORKS */
-    .how { background: var(--light); }
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 28px; margin-top: 50px; }
-    .step { background: var(--white); border-radius: var(--radius); padding: 32px 28px; border: 1px solid #e8e6f8; }
-    .step-num { width: 44px; height: 44px; border-radius: 12px; background: var(--purple-light); color: var(--purple); font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
-    .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
-    .step p { color: var(--mid); font-size: 0.92rem; line-height: 1.6; }
+    /* ── SECTION STRUCTURE ── */
+    .gazette-section {
+      padding: 0 4%;
+      border-bottom: 1px solid var(--rule);
+    }
+    .section-head {
+      padding: 22px 0 0;
+      margin-bottom: 20px;
+    }
+    .section-kicker {
+      font-family: 'Crimson Text', serif;
+      font-size: 0.72rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 6px;
+      display: block;
+    }
+    .section-kicker .zh-inline { font-size: 0.9em; }
+    .section-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+    }
+    .section-deck {
+      font-family: 'Crimson Text', serif;
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--mid);
+      margin-top: 8px;
+      max-width: 640px;
+    }
 
-    /* WHY IT WORKS */
-    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; margin-top: 20px; }
-    .why-features { display: flex; flex-direction: column; gap: 20px; margin-top: 30px; }
-    .why-feature { display: flex; gap: 16px; align-items: flex-start; }
-    .why-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--purple-light); color: var(--purple); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
-    .why-feature h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; }
-    .why-feature p { color: var(--mid); font-size: 0.88rem; }
-    .why-visual { background: linear-gradient(135deg, #1a1831, #2d2660); border-radius: 20px; padding: 40px; color: #fff; text-align: center; }
-    .why-visual-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #a89fff; margin-bottom: 20px; font-weight: 600; }
-    .content-tags { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-    .tag { background: rgba(124,106,247,0.25); border: 1px solid rgba(124,106,247,0.4); color: #c4beff; padding: 7px 14px; border-radius: 100px; font-size: 0.83rem; font-weight: 500; }
-    .tag.highlight { background: var(--purple); border-color: var(--purple); color: #fff; }
+    /* ── COLUMNS ── */
+    .col-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--rule);
+      padding: 20px 0 28px;
+    }
+    .col-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--rule);
+      padding: 20px 0 28px;
+    }
+    .col-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-top: 1px solid var(--rule);
+      padding: 20px 0 28px;
+    }
 
-    /* PRICING */
-    .pricing { background: var(--light); }
-    .pricing-intro { max-width: 600px; margin-bottom: 50px; }
-    .pricing-area { display: inline-flex; align-items: center; gap: 8px; background: var(--purple-light); color: var(--purple); padding: 8px 16px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; margin-bottom: 14px; }
-    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
-    .price-card { background: var(--white); border-radius: var(--radius); padding: 36px; border: 2px solid #e8e6f8; position: relative; }
-    .price-card.featured { border-color: var(--purple); }
-    .price-badge { position: absolute; top: -13px; left: 28px; background: var(--purple); color: #fff; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .price-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
-    .price-card .desc { color: var(--mid); font-size: 0.88rem; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #eee; }
-    .price-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
-    .price-row .label { color: var(--mid); font-size: 0.88rem; }
-    .price-row .amount { font-size: 1.25rem; font-weight: 800; color: var(--dark); }
-    .price-row .amount small { font-size: 0.8rem; font-weight: 500; color: var(--mid); }
-    .price-row.bundle .amount { color: var(--purple); }
-    .saving { display: inline-block; background: #edfff4; color: #1a8a4a; font-size: 0.78rem; font-weight: 600; padding: 3px 10px; border-radius: 100px; margin-top: 12px; }
-    .price-perks { margin-top: 24px; display: flex; flex-direction: column; gap: 8px; }
-    .perk { display: flex; gap: 8px; font-size: 0.88rem; color: var(--mid); }
-    .perk::before { content: '✓'; color: var(--purple); font-weight: 700; flex-shrink: 0; }
-    .price-cta { display: block; text-align: center; margin-top: 28px; background: var(--purple); color: #fff; padding: 12px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: background 0.2s; }
-    .price-cta:hover { background: var(--purple-dark); }
-    .price-card:not(.featured) .price-cta { background: transparent; color: var(--purple); border: 2px solid var(--purple); }
-    .price-card:not(.featured) .price-cta:hover { background: var(--purple-light); }
-    .pricing-note { margin-top: 24px; color: var(--mid); font-size: 0.85rem; text-align: center; }
+    .col {
+      padding: 0 22px;
+      border-right: 1px solid var(--rule);
+    }
+    .col:first-child { padding-left: 0; }
+    .col:last-child  { padding-right: 0; border-right: none; }
 
-    /* QR FEATURE */
-    .qr-feature { background: linear-gradient(135deg, #1a1831 0%, #2d2660 100%); color: #fff; }
-    .qr-feature .section-label { color: #a89fff; }
-    .qr-feature h2 { color: #fff; }
-    .qr-feature .section-sub { color: #b0aed4; }
-    .qr-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 50px; }
-    .qr-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius); padding: 28px; }
-    .qr-card-icon { font-size: 1.6rem; margin-bottom: 14px; }
-    .qr-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
-    .qr-card p { font-size: 0.85rem; color: #b0aed4; line-height: 1.5; }
+    .col-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--light);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .col h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.08rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+    .col h3 .zh { font-size: 0.78em; margin-top: 2px; }
+    .col p {
+      font-size: 0.93rem;
+      color: var(--mid);
+      line-height: 1.65;
+    }
+    .col p + p { margin-top: 8px; }
 
-    /* CONTACT */
-    .contact-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 60px; align-items: start; margin-top: 10px; }
-    .contact-info h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; }
-    .contact-info p { color: var(--mid); font-size: 0.95rem; margin-bottom: 30px; }
-    .contact-detail { display: flex; flex-direction: column; gap: 14px; }
-    .contact-detail-item { display: flex; gap: 12px; align-items: center; }
-    .contact-detail-item .icon { width: 38px; height: 38px; background: var(--purple-light); border-radius: 9px; display: flex; align-items: center; justify-content: center; color: var(--purple); font-size: 1rem; flex-shrink: 0; }
-    .contact-detail-item span { font-size: 0.9rem; color: var(--mid); }
-    form { display: flex; flex-direction: column; gap: 16px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    label { font-size: 0.82rem; font-weight: 600; color: var(--mid); display: block; margin-bottom: 5px; }
-    input, select, textarea { width: 100%; padding: 11px 14px; border: 1.5px solid #dddaf5; border-radius: 9px; font-size: 0.93rem; font-family: inherit; color: var(--dark); background: var(--white); outline: none; transition: border-color 0.2s; }
-    input:focus, select:focus, textarea:focus { border-color: var(--purple); }
-    textarea { min-height: 110px; resize: vertical; }
-    .submit-btn { background: var(--purple); color: #fff; border: none; padding: 13px 28px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: background 0.2s; align-self: flex-start; }
-    .submit-btn:hover { background: var(--purple-dark); }
-    .submit-btn:disabled { opacity: 0.6; cursor: default; }
-    .form-msg { font-size: 0.9rem; padding: 10px 14px; border-radius: 8px; display: none; }
-    .form-msg.success { background: #edfff4; color: #1a6a3a; display: block; }
-    .form-msg.error { background: #fff0f0; color: #a02020; display: block; }
+    /* Drop cap */
+    .drop-cap::first-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.8em;
+      font-weight: 900;
+      float: left;
+      line-height: 0.75;
+      margin-right: 6px;
+      margin-top: 6px;
+      color: var(--ink);
+    }
 
-    /* FOOTER */
-    footer { background: var(--dark); color: #6e6c8e; padding: 36px 5%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-    footer .logo { color: #a89fff; }
-    footer .logo span { color: #6e6c8e; }
-    footer p { font-size: 0.82rem; }
-    footer a { color: var(--purple); text-decoration: none; }
+    /* ── HERO LEAD ── */
+    .hero-lead {
+      padding: 24px 0 0;
+    }
+    .hero-lead-hed {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -1px;
+      border-top: 4px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding: 14px 0;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .hero-lead-hed .zh { font-size: 0.42em; margin-top: 8px; opacity: 0.7; }
 
-    @media (max-width: 768px) {
-      .stats { grid-template-columns: 1fr 1fr; }
-      .stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.15); }
-      .why-grid, .contact-grid { grid-template-columns: 1fr; }
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 2px solid var(--ink);
+      background: var(--ink);
+      margin: 24px 0 0;
+      gap: 1px;
+    }
+    .stat-box {
+      background: var(--paper);
+      padding: 18px 14px;
+      text-align: center;
+    }
+    .stat-box-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 900;
+      display: block;
+      line-height: 1;
+    }
+    .stat-box-label {
+      font-size: 0.75rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-top: 4px;
+      display: block;
+    }
+    .stat-box-label .zh-inline { letter-spacing: 0; font-size: 0.9em; }
+
+    /* ── INVERT BOX (dark) ── */
+    .invert-box {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 28px 24px;
+    }
+    .invert-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--paper);
+    }
+    .invert-box h3 .zh { color: var(--paper); }
+    .invert-box p { color: #c8bfa8; font-size: 0.88rem; }
+    .invert-box .price-big {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--paper);
+      display: block;
+      margin: 12px 0 4px;
+    }
+    .invert-box .price-alt {
+      font-size: 0.85rem;
+      color: var(--light);
+      font-style: italic;
+    }
+    .invert-box .saving {
+      display: inline-block;
+      border: 1px solid var(--light);
+      color: var(--light);
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      margin-top: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .invert-box hr { border-color: rgba(255,255,255,0.2); margin: 16px 0; }
+    .invert-box ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .invert-box ul li { font-size: 0.85rem; color: #c8bfa8; padding-left: 14px; position: relative; }
+    .invert-box ul li::before { content: '—'; position: absolute; left: 0; color: var(--light); }
+
+    /* ── CONTENT TAGS ── */
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .tag-cloud .tag {
+      border: 1px solid var(--rule);
+      font-family: 'Crimson Text', serif;
+      font-size: 0.85rem;
+      padding: 3px 10px;
+      font-style: italic;
+      color: var(--mid);
+    }
+    .tag-cloud .tag.bold {
+      background: var(--ink);
+      color: var(--paper);
+      font-style: normal;
+      font-weight: 600;
+      border-color: var(--ink);
+    }
+
+    /* ── QR FEATURE ── */
+    .qr-features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--ink);
+      border: 1px solid var(--ink);
+      margin-top: 0;
+    }
+    .qr-feature-item {
+      background: var(--paper);
+      padding: 20px;
+    }
+    .qr-feature-item h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .qr-feature-item h4 .zh { font-size: 0.8em; }
+    .qr-feature-item p { font-size: 0.85rem; color: var(--mid); }
+    .qr-feature-icon { font-size: 1.2rem; margin-bottom: 8px; display: block; }
+
+    /* ── CONTACT ── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 0;
+      border-top: 1px solid var(--rule);
+      padding: 20px 0 36px;
+    }
+    .contact-left { padding-right: 28px; border-right: 1px solid var(--rule); }
+    .contact-left h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .contact-left h3 .zh { font-size: 0.7em; }
+    .contact-left p { font-size: 0.9rem; color: var(--mid); margin-bottom: 18px; }
+    .contact-detail { font-size: 0.85rem; color: var(--mid); line-height: 2; }
+    .contact-right { padding-left: 28px; }
+
+    form { display: flex; flex-direction: column; gap: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    label {
+      font-family: 'Crimson Text', serif;
+      font-size: 0.82rem;
+      font-style: italic;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--mid);
+      display: block;
+      margin-bottom: 4px;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: var(--white);
+      border: 1px solid var(--rule);
+      border-radius: 0;
+      padding: 9px 12px;
+      font-family: 'Crimson Text', serif;
+      font-size: 1rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--ink); border-width: 2px; }
+    textarea { min-height: 100px; resize: vertical; }
+    .submit-btn {
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      padding: 12px 28px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background 0.2s;
+      align-self: flex-start;
+    }
+    .submit-btn:hover { background: #3a2f1e; }
+    .submit-btn:disabled { opacity: 0.5; cursor: default; }
+    .form-msg { font-size: 0.9rem; padding: 10px 14px; display: none; border: 1px solid; }
+    .form-msg.success { border-color: #2a5a2a; color: #2a5a2a; background: #f0fff0; display: block; }
+    .form-msg.error   { border-color: #8a2a2a; color: #8a2a2a; background: #fff0f0; display: block; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      color: var(--light);
+      padding: 24px 4%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-family: 'Crimson Text', serif;
+      font-size: 0.88rem;
+    }
+    footer .flag { font-family: 'UnifrakturMaguntia', cursive; font-size: 1.6rem; color: var(--paper); }
+    footer a { color: var(--light); }
+
+    /* ── CLASSIFIED AD STYLE ── */
+    .classifieds-banner {
+      border: 2px solid var(--ink);
+      text-align: center;
+      padding: 10px;
+      margin: 20px 0;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--mid);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .col-grid-3, .col-grid-4 { grid-template-columns: 1fr 1fr; }
+      .col:nth-child(odd):last-child { grid-column: span 2; }
+    }
+    @media (max-width: 600px) {
+      .col-grid-3, .col-grid-4, .col-grid-2, .contact-grid { grid-template-columns: 1fr; }
+      .col { border-right: none; border-bottom: 1px solid var(--rule); padding: 16px 0; }
+      .col:last-child { border-bottom: none; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
       .form-row { grid-template-columns: 1fr; }
-      .why-visual { display: none; }
+      .contact-left { padding-right: 0; border-right: none; border-bottom: 1px solid var(--rule); padding-bottom: 20px; margin-bottom: 20px; }
+      .contact-right { padding-left: 0; }
+      .qr-features-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <div class="logo">Mini<span>Ad</span></div>
-  <a href="#contact" class="cta">Enquire Now</a>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-badge">📮 Hong Kong Post Circular Service · 香港郵政通函服務</div>
-  <h1>Put Your Business in <em>4,000 Ma Wan Homes</em><span class="zh">將您嘅生意帶入4,000個馬灣家庭</span></h1>
-  <p>A premium printed leaflet that residents actually keep — packed with local trivia, puzzles, and horoscopes alongside your ad.<span class="zh">一份住戶真係會留低嘅精美單張——內有本地趣聞、遊戲同星座，配合您嘅廣告。</span></p>
-  <div class="hero-ctas">
-    <a href="#contact" class="btn-primary">Enquire About Ad Space · 查詢廣告位</a>
-    <a href="#how" class="btn-ghost">How It Works · 點樣運作</a>
+<!-- ══ MASTHEAD ══ -->
+<header class="masthead">
+  <div class="masthead-top">
+    <span>Established 2026 · Ma Wan, Hong Kong</span>
+    <span>Advertising Edition · 廣告版</span>
+    <span style="text-align:right">Distributed by HK Post · 香港郵政派遞</span>
   </div>
-</section>
-
-<!-- STATS -->
-<div class="stats">
-  <div class="stat"><span class="stat-num">4,000</span><span class="stat-label">Homes Reached<span class="zh">抵達家庭</span></span></div>
-  <div class="stat"><span class="stat-num">10</span><span class="stat-label">Ad Spots Per Leaflet<span class="zh">每份廣告位</span></span></div>
-  <div class="stat"><span class="stat-num">馬灣</span><span class="stat-label">Park Island Towers<span class="zh">珀麗灣</span></span></div>
-  <div class="stat"><span class="stat-num">郵政</span><span class="stat-label">Official Delivery<span class="zh">香港郵政派遞</span></span></div>
-</div>
-
-<!-- HOW IT WORKS -->
-<section class="how" id="how">
-  <div class="section-label">How It Works · <span class="zh" style="display:inline">點樣運作</span></div>
-  <h2>Simple, Reliable, Measurable<span class="zh">簡單、可靠、有數據</span></h2>
-  <p class="section-sub">We handle everything from design to delivery — and give you real data on how your ad performed.<span class="zh">由設計到派遞，一手包辦——並提供真實數據，讓您了解廣告成效。</span></p>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <h3>Book Your Spot<span class="zh">預訂廣告位</span></h3>
-      <p>Choose a standard or double-sized placement on the front or back of the leaflet. Only 10 spots available per issue.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <h3>We Design &amp; Print<span class="zh">設計同印刷</span></h3>
-      <p>Send us your artwork or we can help design it. The leaflet is professionally printed and prepared for distribution.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <h3>HK Post Delivers<span class="zh">香港郵政派遞</span></h3>
-      <p>Every copy is delivered by Hong Kong Post's official circular service directly to 4,000 Park Island homes in Ma Wan.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <h3>Track Your Results<span class="zh">追蹤廣告成效</span></h3>
-      <p>Your ad includes a dynamic QR code. Log in to your dashboard to see real-time scan counts and engagement data.</p>
-    </div>
+  <div class="masthead-title">
+    <span class="masthead-flag">The Ma Wan Gazette</span>
+    <span class="masthead-sub">馬灣公報 &nbsp;·&nbsp; MiniAd Advertising Opportunities &nbsp;·&nbsp; 廣告機遇</span>
   </div>
-</section>
+  <div class="masthead-bottom">
+    <span>Park Island · 珀麗灣 · 4,000 Homes</span>
+    <span class="center">★ Limited Ad Spots Available · 廣告位有限 ★</span>
+    <span class="right"><a href="#contact" class="masthead-cta">Enquire Now · 立即查詢</a></span>
+  </div>
+</header>
 
-<!-- WHY IT WORKS -->
-<section>
-  <div class="why-grid">
-    <div>
-      <div class="section-label">Why It Works · <span class="zh" style="display:inline">點解有效</span></div>
-      <h2>Leaflets People Actually Read<span class="zh">住戶真係會睇嘅單張</span></h2>
-      <p class="section-sub">Most flyers go straight from the letterbox to the bin. Ours are different — they earn their place in the home.<span class="zh">大部分傳單從信箱直接入垃圾桶。我哋嘅唔同——住戶真係會留低。</span></p>
-      <div class="why-features">
-        <div class="why-feature">
-          <div class="why-icon">🧩</div>
-          <div>
-            <h4>Editorial Content That Captures Attention<span class="zh">吸引住戶睇嘅精彩內容</span></h4>
-            <p>Every issue features local trivia, puzzles, games, and horoscopes that residents look forward to — turning your ad into something they keep.</p>
-          </div>
-        </div>
-        <div class="why-feature">
-          <div class="why-icon">📍</div>
-          <div>
-            <h4>Hyper-Local Targeting<span class="zh">超精準本地定向</span></h4>
-            <p>Ma Wan is a contained community. Reach residents who live, shop, and spend locally — with no wasted impressions.</p>
-          </div>
-        </div>
-        <div class="why-feature">
-          <div class="why-icon">📊</div>
-          <div>
-            <h4>Proof of Performance<span class="zh">廣告成效有根有據</span></h4>
-            <p>Unlike traditional print, your QR code tells you exactly how many people engaged with your ad, by day and over time.</p>
-          </div>
-        </div>
+<hr class="rule">
+
+<!-- ══ LEAD SECTION ══ -->
+<section class="gazette-section">
+  <div class="hero-lead col-animate">
+    <h1 class="hero-lead-hed">
+      Reach 4,000 Ma Wan Homes With Every Issue
+      <span class="zh">每期觸達4,000個馬灣家庭</span>
+    </h1>
+  </div>
+
+  <div class="col-grid-3">
+    <div class="col col-animate col-from-left">
+      <p class="drop-cap">The Ma Wan Gazette is a premium printed publication delivered by Hong Kong Post's official circular service to every home in Park Island — 4,000 households, every issue.</p>
+      <p>Unlike ordinary flyers that go straight from the letterbox to the bin, the Gazette earns its place in the home. Every issue is packed with local trivia, puzzles, games, and horoscopes that residents genuinely look forward to reading.</p>
+      <p style="margin-top:12px;font-style:italic;color:var(--mid)">馬灣公報透過香港郵政通函服務，派送至珀麗灣每個家庭。</p>
+    </div>
+    <div class="col col-animate">
+      <p>Your advertisement appears alongside content that residents keep, read, and share. Ten advertising spots are available per issue — five on the front, five on the back — making placement in the Gazette a genuinely exclusive opportunity.</p>
+      <p>Standard and double-sized placements are available, and every advertiser receives a dynamic QR code with a live dashboard showing real-time scan data across the life of their campaign.</p>
+      <div class="classifieds-banner">
+        "The leaflet residents actually keep" &nbsp;·&nbsp; 住戶真係會留低嘅單張
       </div>
     </div>
-    <div class="why-visual">
-      <div class="why-visual-title">Every Issue Includes · 每期內容</div>
-      <div class="content-tags">
-        <span class="tag highlight">Local Trivia · 本地趣聞</span>
+    <div class="col col-animate col-from-right">
+      <div class="stats-row">
+        <div class="stat-box">
+          <span class="stat-box-num">4,000</span>
+          <span class="stat-box-label">Homes <span class="zh-inline">家庭</span></span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-box-num">10</span>
+          <span class="stat-box-label">Ad Spots <span class="zh-inline">廣告位</span></span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-box-num">馬灣</span>
+          <span class="stat-box-label">Ma Wan <span class="zh-inline">珀麗灣</span></span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-box-num">郵政</span>
+          <span class="stat-box-label">HK Post <span class="zh-inline">官方派遞</span></span>
+        </div>
+      </div>
+      <p style="margin-top:14px;font-size:0.85rem;color:var(--mid);font-style:italic">Spots are strictly limited. Contact us to check availability for the next issue.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule-double">
+
+<!-- ══ WHY IT WORKS ══ -->
+<section class="gazette-section">
+  <div class="section-head col-animate col-from-top">
+    <span class="section-kicker">Why It Works · <span class="zh-inline">點解有效</span></span>
+    <h2 class="section-headline">A Leaflet That Earns Its Place In The Home<span class="zh">一份住戶真係會留低嘅單張</span></h2>
+    <p class="section-deck">Editorial content turns your advertisement into something residents keep, not discard.</p>
+  </div>
+  <div class="col-grid-2">
+    <div class="col col-animate col-from-left">
+      <h3>What's Inside Every Issue<span class="zh">每期精彩內容</span></h3>
+      <p>The secret to the Gazette's staying power is simple: residents find it genuinely useful and entertaining. Each issue features a carefully curated mix of content designed to capture attention and keep the paper in the home long after delivery.</p>
+      <div class="tag-cloud" style="margin-top:16px">
+        <span class="tag bold">Local Trivia · 本地趣聞</span>
         <span class="tag">Word Puzzles · 文字遊戲</span>
-        <span class="tag highlight">Horoscopes · 星座運程</span>
+        <span class="tag bold">Horoscopes · 星座運程</span>
         <span class="tag">Sudoku · 數獨</span>
         <span class="tag">Community News · 社區消息</span>
-        <span class="tag highlight">Crosswords · 填字遊戲</span>
+        <span class="tag bold">Crosswords · 填字遊戲</span>
         <span class="tag">Brain Teasers · 腦筋急轉彎</span>
-        <span class="tag">Seasonal Tips · 季節貼士</span>
-        <span class="tag highlight">Photo Contest · 相片比賽</span>
         <span class="tag">Recipe Corner · 食譜角落</span>
+        <span class="tag bold">Photo Contest · 相片比賽</span>
+        <span class="tag">Seasonal Tips · 季節貼士</span>
+      </div>
+    </div>
+    <div class="col col-animate col-from-right">
+      <h3>The Ma Wan Advantage<span class="zh">馬灣獨有優勢</span></h3>
+      <p>Ma Wan is a self-contained island community. Residents live, shop, dine, and spend locally. There is no more targeted advertising environment in Hong Kong — every impression reaches someone who is already in your neighbourhood.</p>
+      <p style="margin-top:12px">Unlike mass-market media, the Gazette places your business directly in the hands of the community you serve — with no wasted impressions and no algorithmic guesswork.</p>
+      <p style="margin-top:12px;font-style:italic;color:var(--mid)">馬灣係一個自給自足嘅島嶼社區。每個廣告印象都係精準到位。</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule-double">
+
+<!-- ══ HOW IT WORKS ══ -->
+<section class="gazette-section">
+  <div class="section-head col-animate col-from-top">
+    <span class="section-kicker">How It Works · <span class="zh-inline">點樣運作</span></span>
+    <h2 class="section-headline">From Booking to Letterbox in Four Steps<span class="zh">四個步驟，從預訂到派遞</span></h2>
+  </div>
+  <div class="col-grid-4">
+    <div class="col col-animate col-from-left">
+      <span class="col-num">一</span>
+      <h3>Book Your Spot<span class="zh">預訂廣告位</span></h3>
+      <p>Choose a standard or double-sized placement on the front or back of the Gazette. Only 10 spots are available per issue — enquire early to secure your position.</p>
+    </div>
+    <div class="col col-animate">
+      <span class="col-num">二</span>
+      <h3>Artwork &amp; Design<span class="zh">設計同印刷</span></h3>
+      <p>Submit your artwork or discuss your requirements with us. We can assist with design to ensure your ad looks its best alongside the Gazette's editorial content.</p>
+    </div>
+    <div class="col col-animate">
+      <span class="col-num">三</span>
+      <h3>HK Post Delivers<span class="zh">香港郵政派遞</span></h3>
+      <p>Every issue is professionally printed and delivered by Hong Kong Post's official circular service to all 4,000 homes in Park Island, Ma Wan.</p>
+    </div>
+    <div class="col col-animate col-from-right">
+      <span class="col-num">四</span>
+      <h3>Track Your Results<span class="zh">追蹤廣告成效</span></h3>
+      <p>Your dynamic QR code goes live on distribution day. Log in to your dashboard to watch scan counts build in real time across the campaign period.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule-double">
+
+<!-- ══ ADVERTISING RATES ══ -->
+<section class="gazette-section" id="pricing">
+  <div class="section-head col-animate col-from-top">
+    <span class="section-kicker">Advertising Rates · <span class="zh-inline">廣告收費</span></span>
+    <h2 class="section-headline">Transparent Pricing, Limited Availability<span class="zh">清晰收費，名額有限</span></h2>
+    <p class="section-deck">All packages include a dynamic QR code and real-time scan dashboard. · 所有套餐均附送動態QR碼及實時數據儀表板。</p>
+  </div>
+  <div class="col-grid-3">
+    <div class="col col-animate col-from-left">
+      <div class="invert-box">
+        <h3>Standard Spot<span class="zh">標準廣告位</span></h3>
+        <p>Single placement, front or back. Five available per side.</p>
+        <p>正面或背面，每面5個。</p>
+        <span class="price-big">HK$1,000</span>
+        <span class="price-alt">per month · 每月</span>
+        <hr>
+        <span class="price-alt" style="display:block;margin-bottom:4px">or · 或者</span>
+        <span class="price-big" style="font-size:1.6rem">HK$3,500</span>
+        <span class="price-alt">for 4 consecutive months · 連續4個月</span>
+        <span class="saving">Save HK$500 · 慳返 HK$500</span>
+        <hr>
+        <ul>
+          <li>Front or back placement · 正面或背面</li>
+          <li>Dynamic QR code · 動態QR碼</li>
+          <li>Live scan dashboard · 實時掃描數據</li>
+          <li>4,000 home distribution · 派送4,000個家庭</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col col-animate">
+      <div class="invert-box">
+        <h3>Double Spot<span class="zh">雙倍廣告位</span></h3>
+        <p>Double the space, double the impact. Premium position, negotiated placement.</p>
+        <p>雙倍版面，雙倍效果。可洽談最佳位置。</p>
+        <span class="price-big">HK$1,750</span>
+        <span class="price-alt">per month · 每月</span>
+        <hr>
+        <span class="price-alt" style="display:block;margin-bottom:4px">or · 或者</span>
+        <span class="price-big" style="font-size:1.6rem">HK$6,500</span>
+        <span class="price-alt">for 4 consecutive months · 連續4個月</span>
+        <span class="saving">Save HK$500 · 慳返 HK$500</span>
+        <hr>
+        <ul>
+          <li>Double-sized premium placement · 雙倍優質廣告位</li>
+          <li>Dynamic QR code · 動態QR碼</li>
+          <li>Live scan dashboard · 實時掃描數據</li>
+          <li>4,000 home distribution · 派送4,000個家庭</li>
+          <li>Priority position · 優先位置協商</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col col-animate col-from-right">
+      <h3>Why Commit to Four Months?<span class="zh">點解選擇四個月？</span></h3>
+      <p>Advertising effectiveness compounds over time. Residents who see your business consistently across multiple issues of the Gazette develop familiarity and trust — the foundation of local customer relationships.</p>
+      <p style="margin-top:12px">A four-month commitment saves you HK$500 and ensures your brand is present through an entire season of Gazette issues.</p>
+      <p style="margin-top:12px;font-style:italic;color:var(--mid)">廣告效果隨時間累積。連續出現多期令住戶對您嘅品牌產生信任。</p>
+      <div style="margin-top:20px;padding:14px;border:1px solid var(--rule)">
+        <p style="font-size:0.82rem;color:var(--mid);text-align:center">Spots are strictly limited to 10 per issue.<br>廣告位每期只有10個。<br><br><a href="#contact" style="color:var(--ink);font-weight:600">Check availability → 查詢空位</a></p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PRICING -->
-<section class="pricing" id="pricing">
-  <div class="section-label">Advertising Packages · <span class="zh" style="display:inline">廣告套餐</span></div>
-  <div class="pricing-intro">
-    <h2>Transparent, Simple Pricing<span class="zh">清晰透明嘅收費</span></h2>
-    <p class="section-sub">All placements include a dynamic QR code with a real-time scan dashboard. Double placements are available on request.<span class="zh">所有廣告位均附送動態QR碼及實時掃描數據。雙倍廣告位可洽談。</span></p>
+<hr class="rule-double">
+
+<!-- ══ QR DASHBOARD ══ -->
+<section class="gazette-section">
+  <div class="section-head col-animate col-from-top">
+    <span class="section-kicker">Included Free · <span class="zh-inline">免費附送</span></span>
+    <h2 class="section-headline">Know Exactly How Your Ad Performed<span class="zh">掌握廣告成效，一目瞭然</span></h2>
+    <p class="section-deck">Print advertising has never been measurable — until now. Every placement includes a dynamic QR code and a live analytics dashboard.</p>
   </div>
-  <div class="pricing-area">📍 馬灣 · 珀麗灣 · Ma Wan · Park Island · 4,000 homes · 4,000個家庭</div>
-  <br><br>
-  <div class="pricing-grid">
-
-    <div class="price-card">
-      <h3>Standard Spot<span class="zh">標準廣告位</span></h3>
-      <p class="desc">Single ad placement — front or back of leaflet. 5 available per side.<span class="zh">單個廣告位——單張正面或背面。每面5個。</span></p>
-      <div class="price-row">
-        <span class="label">Monthly rate · 每月費用</span>
-        <span class="amount">HK$1,000 <small>/mo</small></span>
+  <div class="col-grid-2" style="border-top:1px solid var(--rule);padding-top:20px">
+    <div class="col col-animate col-from-left">
+      <p>Every advertisement in the Gazette includes a custom-styled dynamic QR code. Scan data flows into your private dashboard the moment residents begin scanning — giving you real, time-stamped proof that your ad is working.</p>
+      <p style="margin-top:12px">You can also update your QR destination at any time. Running a new promotion? Change the landing page without reprinting a single copy of the Gazette.</p>
+      <p style="margin-top:12px;font-style:italic;color:var(--mid)">每個廣告位均附送動態QR碼。住戶掃描後，實時數據即時顯示喺您嘅儀表板。</p>
+      <div style="margin-top:20px">
+        <a href="https://qr.miniad.club" target="_blank" style="display:inline-block;background:var(--ink);color:var(--paper);font-family:'Playfair Display',serif;font-size:0.9rem;padding:10px 20px;text-decoration:none;letter-spacing:1px">View Dashboard · 查看儀表板 →</a>
       </div>
-      <div class="price-row bundle">
-        <span class="label">4-month bundle · 四個月套餐</span>
-        <span class="amount">HK$3,500 <small>total</small></span>
-      </div>
-      <span class="saving">Save HK$500 · 慳返 HK$500</span>
-      <div class="price-perks">
-        <div class="perk">Front or back placement · 正面或背面廣告位</div>
-        <div class="perk">Dynamic QR code included · 附送動態QR碼</div>
-        <div class="perk">Real-time scan dashboard · 實時掃描數據</div>
-        <div class="perk">4,000 home distribution · 派送至4,000個家庭</div>
-      </div>
-      <a href="#contact" class="price-cta">Enquire Now · 立即查詢</a>
     </div>
-
-    <div class="price-card featured">
-      <div class="price-badge">Most Impactful · 最大效果</div>
-      <h3>Double Spot<span class="zh">雙倍廣告位</span></h3>
-      <p class="desc">Twice the space, twice the impact. Negotiated placement for maximum visibility.<span class="zh">雙倍版面，雙倍效果。可洽談最佳位置。</span></p>
-      <div class="price-row">
-        <span class="label">Monthly rate · 每月費用</span>
-        <span class="amount">HK$1,750 <small>/mo</small></span>
+    <div class="col col-animate col-from-right">
+      <div class="qr-features-grid">
+        <div class="qr-feature-item">
+          <span class="qr-feature-icon">📈</span>
+          <h4>Real-Time Scan Counts<span class="zh">實時掃描次數</span></h4>
+          <p>Live scan data from the moment of distribution.</p>
+        </div>
+        <div class="qr-feature-item">
+          <span class="qr-feature-icon">📅</span>
+          <h4>Day-by-Day Breakdown<span class="zh">每日數據分析</span></h4>
+          <p>See which days drive the most engagement.</p>
+        </div>
+        <div class="qr-feature-item">
+          <span class="qr-feature-icon">🔗</span>
+          <h4>Update Destination Anytime<span class="zh">隨時更改目標網址</span></h4>
+          <p>Change your landing page without reprinting.</p>
+        </div>
+        <div class="qr-feature-item">
+          <span class="qr-feature-icon">🎨</span>
+          <h4>Custom Branded QR<span class="zh">自訂品牌QR碼</span></h4>
+          <p>Your colours, your logo, your style.</p>
+        </div>
       </div>
-      <div class="price-row bundle">
-        <span class="label">4-month bundle · 四個月套餐</span>
-        <span class="amount">HK$6,500 <small>total</small></span>
-      </div>
-      <span class="saving">Save HK$500 · 慳返 HK$500</span>
-      <div class="price-perks">
-        <div class="perk">Double-sized premium placement · 雙倍優質廣告位</div>
-        <div class="perk">Dynamic QR code included · 附送動態QR碼</div>
-        <div class="perk">Real-time scan dashboard · 實時掃描數據</div>
-        <div class="perk">4,000 home distribution · 派送至4,000個家庭</div>
-        <div class="perk">Priority position negotiation · 優先位置協商</div>
-      </div>
-      <a href="#contact" class="price-cta">Enquire Now · 立即查詢</a>
-    </div>
-
-  </div>
-  <p class="pricing-note">Spots are limited to 10 per leaflet. Contact us to check availability for upcoming issues.</p>
-</section>
-
-<!-- QR FEATURE -->
-<section class="qr-feature">
-  <div class="section-label">Included Free · <span class="zh" style="display:inline">免費附送</span></div>
-  <h2>Know Exactly How Your Ad Performed<span class="zh">掌握廣告成效，一目瞭然</span></h2>
-  <p class="section-sub">Every ad spot comes with a dynamic QR code and access to a live dashboard — something most print media simply can't offer.<span class="zh">每個廣告位均附送動態QR碼及實時數據儀表板——傳統印刷媒體難以提供。</span></p>
-  <div class="qr-cards">
-    <div class="qr-card">
-      <div class="qr-card-icon">📈</div>
-      <h4>Real-Time Scan Counts<span class="zh">實時掃描次數</span></h4>
-      <p>See how many people scanned your QR code, updated live as scans happen.</p>
-    </div>
-    <div class="qr-card">
-      <div class="qr-card-icon">📅</div>
-      <h4>Day-by-Day Breakdown<span class="zh">每日數據分析</span></h4>
-      <p>Track engagement over the life of the campaign to see peak interest periods.</p>
-    </div>
-    <div class="qr-card">
-      <div class="qr-card-icon">🔗</div>
-      <h4>Change Your Destination<span class="zh">隨時更改目標網址</span></h4>
-      <p>Update where your QR code points at any time — without reprinting the leaflet.</p>
-    </div>
-    <div class="qr-card">
-      <div class="qr-card-icon">🎨</div>
-      <h4>Custom Branded QR<span class="zh">自訂品牌QR碼</span></h4>
-      <p>Match your QR code colours and style to your brand, with your logo embedded.</p>
     </div>
   </div>
 </section>
 
-<!-- CONTACT -->
-<section id="contact">
+<hr class="rule-double">
+
+<!-- ══ CONTACT ══ -->
+<section class="gazette-section" id="contact">
+  <div class="section-head col-animate col-from-top">
+    <span class="section-kicker">Enquiries &amp; Bookings · <span class="zh-inline">查詢及預訂</span></span>
+  </div>
   <div class="contact-grid">
-    <div class="contact-info">
-      <div class="section-label">Get In Touch · <span class="zh" style="display:inline">聯絡我哋</span></div>
-      <h3>Reserve Your Ad Spot<span class="zh">預訂您嘅廣告位</span></h3>
-      <p>Spots sell out fast — each leaflet has only 10. Get in touch to check availability for the next Ma Wan drop.<span class="zh">廣告位有限，每份只有10個。立即聯絡，查詢下期馬灣派送嘅空位。</span></p>
-      <div class="contact-detail">
-        <div class="contact-detail-item">
-          <div class="icon">📍</div>
-          <span>Ma Wan, Park Island — 4,000 homes</span>
-        </div>
-        <div class="contact-detail-item">
-          <div class="icon">📮</div>
-          <span>Delivered by Hong Kong Post circular service</span>
-        </div>
-        <div class="contact-detail-item">
-          <div class="icon">✉️</div>
-          <span>We'll respond within 1 business day</span>
-        </div>
+    <div class="contact-left col-animate col-from-left">
+      <h3>Reserve Your Spot in the Gazette<span class="zh">預訂您嘅廣告位</span></h3>
+      <p>Spots sell out ahead of each issue. Fill out the form and we'll confirm availability and next steps within one business day.</p>
+      <p>廣告位每期均提前售罄。請填寫表格，我哋將於一個工作天內確認空位及後續安排。</p>
+      <div class="contact-detail" style="margin-top:20px">
+        <div>📍 Ma Wan · Park Island · 馬灣珀麗灣</div>
+        <div>📮 Hong Kong Post Circular · 香港郵政通函</div>
+        <div>🏠 4,000 households per issue · 每期4,000個家庭</div>
+        <div>✉️ Response within 1 business day · 一個工作天內回覆</div>
       </div>
     </div>
-    <form id="enquiry-form">
-      <div class="form-row">
-        <div>
-          <label for="name">Your Name · 姓名 *</label>
-          <input type="text" id="name" name="name" required placeholder="Chan Tai Man">
+    <div class="contact-right col-animate col-from-right">
+      <form id="enquiry-form">
+        <div class="form-row">
+          <div>
+            <label for="name">Your Name · 姓名 *</label>
+            <input type="text" id="name" name="name" required placeholder="Chan Tai Man">
+          </div>
+          <div>
+            <label for="company">Company · 公司／商號</label>
+            <input type="text" id="company" name="company" placeholder="ABC Restaurant">
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label for="email">Email · 電郵 *</label>
+            <input type="email" id="email" name="email" required placeholder="you@example.com">
+          </div>
+          <div>
+            <label for="phone">Phone · 電話</label>
+            <input type="tel" id="phone" name="phone" placeholder="+852 9XXX XXXX">
+          </div>
         </div>
         <div>
-          <label for="company">Company / Business · 公司／商號</label>
-          <input type="text" id="company" name="company" placeholder="ABC Restaurant">
+          <label for="package">Package Interest · 廣告套餐</label>
+          <select id="package" name="package">
+            <option value="">— Select · 選擇 —</option>
+            <option>Standard spot — HK$1,000/month · 標準廣告位</option>
+            <option>Standard 4-month — HK$3,500 · 標準四個月套餐</option>
+            <option>Double spot — HK$1,750/month · 雙倍廣告位</option>
+            <option>Double 4-month — HK$6,500 · 雙倍四個月套餐</option>
+            <option>Not sure yet · 未決定</option>
+          </select>
         </div>
-      </div>
-      <div class="form-row">
         <div>
-          <label for="email">Email Address · 電郵地址 *</label>
-          <input type="email" id="email" name="email" required placeholder="you@example.com">
+          <label for="message">Message · 留言</label>
+          <textarea id="message" name="message" placeholder="Tell us about your business and what you'd like to promote… 請介紹您嘅業務及推廣目標…"></textarea>
         </div>
-        <div>
-          <label for="phone">Phone Number · 電話號碼</label>
-          <input type="tel" id="phone" name="phone" placeholder="+852 9XXX XXXX">
-        </div>
-      </div>
-      <div>
-        <label for="package">Package Interest · 廣告套餐</label>
-        <select id="package" name="package">
-          <option value="">— Select a package —</option>
-          <option value="Standard (HK$1,000/month)">Standard spot — HK$1,000/month</option>
-          <option value="Standard 4-month (HK$3,500)">Standard spot — HK$3,500 for 4 months</option>
-          <option value="Double (HK$1,750/month)">Double spot — HK$1,750/month</option>
-          <option value="Double 4-month (HK$6,500)">Double spot — HK$6,500 for 4 months</option>
-          <option value="Not sure yet">Not sure yet</option>
-        </select>
-      </div>
-      <div>
-        <label for="message">Message · 留言</label>
-        <textarea id="message" name="message" placeholder="Tell us about your business and what you'd like to promote…"></textarea>
-      </div>
-      <div class="form-msg" id="form-msg"></div>
-      <button type="submit" class="submit-btn" id="submit-btn">Send Enquiry · 發送查詢</button>
-    </form>
+        <div class="form-msg" id="form-msg"></div>
+        <button type="submit" class="submit-btn" id="submit-btn">Send Enquiry · 發送查詢</button>
+      </form>
+    </div>
   </div>
 </section>
 
-<!-- FOOTER -->
+<!-- ══ FOOTER ══ -->
 <footer>
-  <div class="logo">Mini<span>Ad</span></div>
-  <p>Hyperlocal print advertising for Ma Wan, Hong Kong · 馬灣本地精準廣告</p>
-  <p>Powered by <a href="https://qr.miniad.club">QR Dashboard</a></p>
+  <span class="flag">The Ma Wan Gazette</span>
+  <span>Hyperlocal print advertising · 馬灣本地精準廣告</span>
+  <span><a href="https://qr.miniad.club">QR Dashboard · 儀表板</a></span>
 </footer>
 
 <script>
+  // Scroll-triggered column animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.col-animate').forEach(el => observer.observe(el));
+
+  // Enquiry form
   document.getElementById('enquiry-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const btn = document.getElementById('submit-btn');
     const msg = document.getElementById('form-msg');
     btn.disabled = true;
-    btn.textContent = 'Sending…';
+    btn.textContent = 'Sending… 發送中…';
     msg.className = 'form-msg';
-    msg.style.display = 'none';
     try {
       const res = await fetch('https://qr.miniad.club/api/enquiry', {
         method: 'POST',
@@ -441,16 +832,16 @@
           message: document.getElementById('message').value,
         }),
       });
-      if (!res.ok) throw new Error('Server error');
+      if (!res.ok) throw new Error();
       msg.className = 'form-msg success';
-      msg.textContent = '✓ Enquiry sent! We\'ll be in touch within 1 business day.';
+      msg.textContent = '✓ Enquiry received. We\'ll be in touch within one business day. · 查詢已收到，我哋將於一個工作天內聯絡您。';
       this.reset();
     } catch {
       msg.className = 'form-msg error';
-      msg.textContent = 'Something went wrong — please email us directly.';
+      msg.textContent = 'Something went wrong — please try again. · 發生錯誤，請再試。';
     }
     btn.disabled = false;
-    btn.textContent = 'Send Enquiry';
+    btn.textContent = 'Send Enquiry · 發送查詢';
   });
 </script>
 
