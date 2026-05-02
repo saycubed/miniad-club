@@ -112,17 +112,17 @@
     }
     .masthead-bottom {
       display: grid;
-      grid-template-columns: 1fr auto 1fr;
+      grid-template-columns: repeat(3, 1fr);
       align-items: center;
-      gap: 16px;
+      gap: 0;
       padding: 8px 0;
       font-size: 0.75rem;
       font-family: 'Crimson Text', serif;
       font-style: italic;
       color: var(--mid);
+      text-align: center;
     }
-    .masthead-bottom .center { text-align: center; font-style: normal; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; }
-    .masthead-bottom .right { text-align: right; }
+    .masthead-bottom .center { font-style: normal; letter-spacing: 2px; text-transform: uppercase; font-size: 0.7rem; line-height: 1.8; }
     .masthead-cta {
       display: inline-block;
       background: var(--ink);
@@ -512,8 +512,8 @@
   </div>
   <div class="masthead-bottom">
     <span>Park Island · 珀麗灣 · 4,000 Homes</span>
-    <span class="center">★ Limited Ad Spots Available · 廣告位有限 ★</span>
-    <span class="right"><a href="#contact" class="masthead-cta">Enquire Now · 立即查詢</a></span>
+    <span class="center">★ ★<br>Limited Ad Spots Available · 廣告位有限<br>★ ★</span>
+    <span><a href="#contact" class="masthead-cta">Enquire Now · 立即查詢</a></span>
   </div>
 </header>
 
